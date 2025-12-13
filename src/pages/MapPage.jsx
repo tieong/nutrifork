@@ -440,6 +440,7 @@ function MapPage() {
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
+      attributionControl: false,
       style: style,
       center: [userLocation.lng, userLocation.lat],
       zoom: 15,
