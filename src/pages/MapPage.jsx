@@ -31,13 +31,13 @@ const filterDishesByAllergies = (dishes, userAllergies) => {
 function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack }) {
   return (
     <div className="absolute top-4 left-4 z-20 animate-slide-down">
-      {/* Dark glassmorphism panel */}
+      {/* Light solid panel */}
       <div className="header-glass px-4 py-3 flex items-center gap-3">
         
         {/* Back button */}
         <button
           onClick={onBack}
-          className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300 group"
+          className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-all duration-300 group"
           title="Modifier mes allergies"
         >
           <svg 
@@ -51,70 +51,61 @@ function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack }) {
         </button>
 
         {/* Divider */}
-        <div className="w-px h-8 bg-white/10"></div>
+        <div className="w-px h-8 bg-gray-300"></div>
 
-        {/* Logo with glow */}
+        {/* Logo */}
         <div className="flex items-center gap-2.5">
-          <div className="relative">
-            <div className="absolute inset-0 bg-emerald-500/30 rounded-xl blur-lg"></div>
-            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-              <span className="text-lg">🌱</span>
-            </div>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-md">
+            <span className="text-lg">🌱</span>
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-white text-base tracking-tight leading-tight">
+            <span className="font-bold text-gray-900 text-base tracking-tight leading-tight">
               NutriFork
             </span>
-            <span className="text-[9px] text-white/40 uppercase tracking-wider font-medium">
+            <span className="text-[9px] text-gray-500 uppercase tracking-wider font-medium">
               Veggie Finder
             </span>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="w-px h-8 bg-white/10"></div>
+        <div className="w-px h-8 bg-gray-300"></div>
 
-        {/* Stats with glow */}
+        {/* Stats */}
         <div className="flex items-center gap-2">
           {/* Allergies badge */}
           {allergiesCount > 0 && (
-            <div className="relative group">
-              <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-md group-hover:blur-lg transition-all"></div>
-              <div className="relative flex items-center gap-1.5 bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-full text-xs font-semibold border border-amber-500/30">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <span>{allergiesCount}</span>
-              </div>
+            <div className="flex items-center gap-1.5 bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full text-xs font-semibold border border-amber-300">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>{allergiesCount}</span>
             </div>
           )}
 
           {/* Restaurants count */}
-          <div className="relative group">
-            <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-md group-hover:blur-lg transition-all"></div>
-            <div className="relative flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-full text-xs font-semibold border border-emerald-500/30">
-              {isSearching ? (
-                <>
-                  <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>...</span>
-                </>
-              ) : (
-                <>
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span>{restaurantsCount}</span>
-                </>
-              )}
-            </div>
+          <div className="flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold border border-emerald-300">
+            {isSearching ? (
+              <>
+                <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>...</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>{restaurantsCount}</span>
+              </>
+            )}
           </div>
 
           {/* Distance indicator */}
-          <span className="text-[10px] text-white/30 font-medium">&lt;1km</span>
+          <span className="text-[10px] text-gray-500 font-medium">&lt;1km</span>
         </div>
       </div>
     </div>
@@ -330,12 +321,11 @@ function MapPage() {
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      // Using Jawg Dark theme for that premium DataFast look
-      style: `https://api.jawg.io/styles/jawg-dark.json?access-token=${JAWG_ACCESS_TOKEN}`,
+      // Using Jawg Streets (light) theme
+      style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${JAWG_ACCESS_TOKEN}`,
       center: [userLocation.lng, userLocation.lat],
       zoom: 15,
-      pitch: 45, // Slight tilt for 3D effect
-      bearing: -10,
+      pitch: 0,
       antialias: true
     })
 
@@ -444,17 +434,8 @@ function MapPage() {
   }
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#0a0f1a]">
-      {/* Atmospheric vignette overlay */}
-      <div className="absolute inset-0 pointer-events-none z-10 vignette-overlay"></div>
-      
-      {/* Top gradient for header blend */}
-      <div className="absolute top-0 left-0 right-0 h-32 pointer-events-none z-10 bg-gradient-to-b from-black/40 to-transparent"></div>
-      
-      {/* Bottom gradient for depth */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none z-10 bg-gradient-to-t from-black/30 to-transparent"></div>
-
-      {/* Premium dark header */}
+    <div className="relative w-full h-screen overflow-hidden bg-gray-100">
+      {/* Light header */}
       <MapHeader 
         allergiesCount={userAllergies.length}
         restaurantsCount={restaurants.length}
@@ -473,15 +454,15 @@ function MapPage() {
       <div 
         ref={mapContainerRef} 
         className="w-full h-full"
-        style={{ background: '#0a0f1a' }}
+        style={{ background: '#f1f5f9' }}
       />
 
       {/* Restaurant count floating badge */}
       {!isSearching && restaurants.length > 0 && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-fade-up">
           <div className="header-glass px-4 py-2 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-            <span className="text-white/80 text-sm font-medium">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span className="text-gray-800 text-sm font-medium">
               {restaurants.length} restaurants végé à proximité
             </span>
           </div>
