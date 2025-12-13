@@ -10,9 +10,6 @@ const defaultCenter = {
   lng: 2.3522
 }
 
-// Libraries to load for Google Places API
-const libraries = ['places']
-
 // Helper function to filter dishes based on user allergies
 const filterDishesByAllergies = (dishes, userAllergies) => {
   if (!userAllergies || userAllergies.length === 0) {
@@ -29,22 +26,22 @@ const filterDishesByAllergies = (dishes, userAllergies) => {
 }
 
 // ============================================
-// NEW HEADER COMPONENT - Glassmorphism style
+// PREMIUM DARK HEADER - Glassmorphism style
 // ============================================
 function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack }) {
   return (
-    <div className="absolute top-4 left-4 z-10">
-      {/* Single unified panel */}
-      <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-lg shadow-black/10 border border-white/50 px-4 py-3 flex items-center gap-3">
+    <div className="absolute top-4 left-4 z-20 animate-slide-down">
+      {/* Dark glassmorphism panel */}
+      <div className="header-glass px-4 py-3 flex items-center gap-3">
         
-        {/* Back button - Now on the left */}
+        {/* Back button */}
         <button
           onClick={onBack}
-          className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-all duration-200 group"
+          className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300 group"
           title="Modifier mes allergies"
         >
           <svg 
-            className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" 
+            className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-0.5" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -54,65 +51,120 @@ function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack }) {
         </button>
 
         {/* Divider */}
-        <div className="w-px h-8 bg-gray-200"></div>
+        <div className="w-px h-8 bg-white/10"></div>
 
-        {/* Logo */}
+        {/* Logo with glow */}
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center">
-            <img src="/mascott.webp" alt="NutriFork" className="w-full h-full object-contain" />
+          <div className="relative">
+            <div className="absolute inset-0 bg-emerald-500/30 rounded-xl blur-lg"></div>
+            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+              <span className="text-lg">🌱</span>
+            </div>
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-gray-800 text-base tracking-tight leading-tight">
+            <span className="font-bold text-white text-base tracking-tight leading-tight">
               NutriFork
             </span>
-            <span className="text-[9px] text-gray-400 uppercase tracking-wider">
+            <span className="text-[9px] text-white/40 uppercase tracking-wider font-medium">
               Veggie Finder
             </span>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="w-px h-8 bg-gray-200"></div>
+        <div className="w-px h-8 bg-white/10"></div>
 
-        {/* Stats */}
+        {/* Stats with glow */}
         <div className="flex items-center gap-2">
           {/* Allergies badge */}
           {allergiesCount > 0 && (
-            <div className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full text-xs font-semibold border border-amber-200/50">
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <span>{allergiesCount}</span>
+            <div className="relative group">
+              <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-md group-hover:blur-lg transition-all"></div>
+              <div className="relative flex items-center gap-1.5 bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-full text-xs font-semibold border border-amber-500/30">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span>{allergiesCount}</span>
+              </div>
             </div>
           )}
 
           {/* Restaurants count */}
-          <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-semibold border border-emerald-200/50">
-            {isSearching ? (
-              <>
-                <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>...</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span>{restaurantsCount}</span>
-              </>
-            )}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-md group-hover:blur-lg transition-all"></div>
+            <div className="relative flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-full text-xs font-semibold border border-emerald-500/30">
+              {isSearching ? (
+                <>
+                  <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span>{restaurantsCount}</span>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Distance indicator */}
-          <span className="text-[10px] text-gray-400 font-medium">&lt;1km</span>
+          <span className="text-[10px] text-white/30 font-medium">&lt;1km</span>
         </div>
       </div>
     </div>
   )
+}
+
+// ============================================
+// ANIMATED USER MARKER COMPONENT
+// ============================================
+function createUserMarker() {
+  const container = document.createElement('div')
+  container.className = 'marker-container'
+  container.innerHTML = `
+    <div class="user-marker">
+      <div class="user-marker-pulse"></div>
+      <div class="user-marker-pulse" style="animation-delay: 0.5s"></div>
+      <div class="user-marker-pulse" style="animation-delay: 1s"></div>
+      <div class="user-marker-dot"></div>
+    </div>
+  `
+  return container
+}
+
+// ============================================
+// ANIMATED RESTAURANT MARKER COMPONENT
+// ============================================
+function createRestaurantMarker(restaurant, index) {
+  const rating = restaurant.rating || 4.0
+  const ratingClass = rating >= 4.5 ? 'rating-excellent' : rating >= 4.0 ? 'rating-high' : 'rating-medium'
+  
+  // Container externe (géré par MapLibre - NE PAS transformer)
+  const container = document.createElement('div')
+  container.className = 'marker-container'
+  container.style.animationDelay = `${index * 60}ms`
+  
+  // Wrapper interne pour les animations (on peut transformer celui-ci)
+  container.innerHTML = `
+    <div class="restaurant-marker ${ratingClass}">
+      <div class="restaurant-marker-glow"></div>
+      <div class="restaurant-marker-inner">
+        <span class="restaurant-marker-icon">🍽️</span>
+      </div>
+      <div class="restaurant-marker-rating">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        <span>${rating.toFixed(1)}</span>
+      </div>
+    </div>
+  `
+  
+  return container
 }
 
 function MapPage() {
@@ -122,6 +174,7 @@ function MapPage() {
   const [restaurants, setRestaurants] = useState([])
   const [isSearching, setIsSearching] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [mapLoaded, setMapLoaded] = useState(false)
   const navigate = useNavigate()
   const mapContainerRef = useRef(null)
   const mapRef = useRef(null)
@@ -161,17 +214,14 @@ function MapPage() {
 
     setIsSearching(true)
     try {
-      // Import Places library
       const { Place, SearchNearbyRankPreference } = await window.google.maps.importLibrary('places')
 
       const request = {
         fields: ['displayName', 'location', 'formattedAddress', 'rating', 'types', 'businessStatus', 'primaryType'],
         locationRestriction: {
           center: location,
-          radius: 1000, // 1km radius
+          radius: 1000,
         },
-        // Filter for restaurants, cafes, and food establishments only
-        // Up to 5 types can be specified to ensure we only get food/drink places
         includedPrimaryTypes: [
           'restaurant',
           'cafe',
@@ -179,7 +229,7 @@ function MapPage() {
           'bakery',
           'meal_takeaway'
         ],
-        maxResultCount: 20, // Maximum autorisé par l'API
+        maxResultCount: 20,
         rankPreference: SearchNearbyRankPreference.POPULARITY,
         language: 'fr',
         region: 'fr',
@@ -190,117 +240,66 @@ function MapPage() {
       if (places && places.length > 0) {
         console.log('Places found:', places.length)
 
-        // List of types to exclude (non-food/drink establishments)
         const excludedTypes = ['museum', 'park', 'tourist_attraction', 'art_gallery', 'library',
                                'gym', 'spa', 'church', 'mosque', 'synagogue', 'school', 'hospital',
                                'amusement_park', 'aquarium', 'zoo', 'stadium', 'shopping_mall',
                                'store', 'clothing_store', 'book_store', 'night_club']
 
-        // Transform places to match our restaurant structure (without dishes initially)
         const transformedRestaurants = places
           .filter(place => {
-            // Log for debugging
-            console.log('Checking place:', place.displayName, 'Primary type:', place.primaryType, 'All types:', place.types)
-
-            // Get all types (both primary and secondary)
             const placeTypes = place.types || []
-
-            // Exclude if ANY type is in the excluded list (museums, parks, etc.)
             const hasExcludedType = placeTypes.some(type => excludedTypes.includes(type))
-            if (hasExcludedType) {
-              console.log('❌ Excluding (has excluded type):', place.displayName, placeTypes)
-              return false
+            return !hasExcludedType && place.businessStatus === 'OPERATIONAL'
+          })
+          .map(place => {
+            const primaryType = place.primaryType || place.types?.[0] || 'restaurant'
+            const typeLabels = {
+              'restaurant': 'Restaurant',
+              'cafe': 'Café',
+              'bar': 'Bar',
+              'bakery': 'Boulangerie',
+              'meal_takeaway': 'À emporter',
+              'food': 'Restaurant'
             }
 
-            // If it passed the API filters (includedPrimaryTypes) and doesn't have excluded types, include it
-            console.log('✅ Including:', place.displayName, 'Type:', place.primaryType)
-            return true
-          })
-          .map((place, index) => {
-            // Get a user-friendly type name
-            const primaryType = place.primaryType || 'restaurant'
-            let typeDisplay = 'Restaurant'
-            if (primaryType.includes('cafe')) typeDisplay = 'Café'
-            else if (primaryType.includes('bar')) typeDisplay = 'Bar'
-            else if (primaryType.includes('bakery')) typeDisplay = 'Boulangerie'
-            else if (primaryType.includes('vegetarian')) typeDisplay = 'Restaurant végétarien'
-            else if (primaryType.includes('vegan')) typeDisplay = 'Restaurant vegan'
-
             return {
-              id: place.id || `restaurant-${index}`,
+              id: place.id || `place-${Math.random()}`,
               name: place.displayName || 'Restaurant',
+              address: place.formattedAddress || '',
               position: {
                 lat: place.location?.lat() || location.lat,
-                lng: place.location?.lng() || location.lng
+                lng: place.location?.lng() || location.lng,
               },
-              address: place.formattedAddress || 'Adresse non disponible',
-              type: typeDisplay,
               rating: place.rating || 4.0,
-              dishes: [], // Will be fetched from Perplexity
-              isLoadingMenu: true // Flag to show loading state
+              type: typeLabels[primaryType] || 'Restaurant',
+              dishes: [],
+              isLoading: false,
+              menuFetched: false
             }
           })
 
         setRestaurants(transformedRestaurants)
-
-        // Fetch menus from Perplexity for each restaurant
-        console.log('🔍 Fetching menus from Perplexity for', transformedRestaurants.length, 'restaurants...')
-
-        // Fetch menus sequentially with delay to avoid rate limiting
-        for (let i = 0; i < transformedRestaurants.length; i++) {
-          const restaurant = transformedRestaurants[i]
-
-          try {
-            console.log(`Fetching menu for ${restaurant.name}...`)
-            const dishes = await fetchRestaurantMenu(restaurant.name, restaurant.address)
-
-            // Update the specific restaurant with fetched dishes
-            setRestaurants(prevRestaurants =>
-              prevRestaurants.map(r =>
-                r.id === restaurant.id
-                  ? { ...r, dishes, isLoadingMenu: false }
-                  : r
-              )
-            )
-
-            console.log(`✅ Menu fetched for ${restaurant.name}: ${dishes.length} dishes`)
-
-            // Add delay between requests to respect rate limits (1 second)
-            if (i < transformedRestaurants.length - 1) {
-              await new Promise(resolve => setTimeout(resolve, 1000))
-            }
-          } catch (error) {
-            console.error(`Failed to fetch menu for ${restaurant.name}:`, error)
-            // Mark as finished loading even on error (fallback dishes will be used)
-            setRestaurants(prevRestaurants =>
-              prevRestaurants.map(r =>
-                r.id === restaurant.id
-                  ? { ...r, isLoadingMenu: false }
-                  : r
-              )
-            )
-          }
-        }
-
-        console.log('✅ All menus fetched!')
       } else {
-        console.log('No restaurants found nearby')
         setRestaurants([])
       }
     } catch (error) {
-      console.error('Error searching for restaurants:', error)
+      console.error('Error searching restaurants:', error)
       setRestaurants([])
     } finally {
       setIsSearching(false)
     }
   }, [isLoaded])
 
-  // Get user allergies from localStorage
+  // Load user allergies from localStorage
   useEffect(() => {
-    const allergies = JSON.parse(localStorage.getItem('userAllergies') || '[]')
-    setUserAllergies(allergies)
+    const savedAllergies = localStorage.getItem('userAllergies')
+    if (savedAllergies) {
+      setUserAllergies(JSON.parse(savedAllergies))
+    }
+  }, [])
 
-    // Get user's location
+  // Get user location
+  useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -308,208 +307,154 @@ function MapPage() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           }
-          console.log('🔴 Votre position détectée:', newLocation)
           setUserLocation(newLocation)
         },
         (error) => {
-          console.error('❌ Erreur de géolocalisation:', error)
-          console.log('📍 Utilisation de la position par défaut (Paris):', defaultCenter)
-          // Use default location (Paris) if geolocation fails
+          console.log('Geolocation error:', error)
+          setUserLocation(defaultCenter)
         }
       )
-    } else {
-      console.log('⚠️ Géolocalisation non disponible, utilisation de Paris')
     }
   }, [])
 
-  // Search for restaurants when location changes and maps is loaded
+  // Search restaurants when location changes
   useEffect(() => {
     if (isLoaded && userLocation) {
       searchNearbyRestaurants(userLocation)
     }
   }, [isLoaded, userLocation, searchNearbyRestaurants])
 
-  // Initialize MapLibre map
+  // Initialize MapLibre with DARK theme
   useEffect(() => {
     if (!mapContainerRef.current || !JAWG_ACCESS_TOKEN) return
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${JAWG_ACCESS_TOKEN}`,
+      // Using Jawg Dark theme for that premium DataFast look
+      style: `https://api.jawg.io/styles/jawg-dark.json?access-token=${JAWG_ACCESS_TOKEN}`,
       center: [userLocation.lng, userLocation.lat],
-      zoom: 14
+      zoom: 15,
+      pitch: 45, // Slight tilt for 3D effect
+      bearing: -10,
+      antialias: true
     })
 
-    map.addControl(new maplibregl.NavigationControl(), 'top-right')
+    // Custom navigation control positioning
+    map.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'bottom-right')
+
+    map.on('load', () => {
+      setMapLoaded(true)
+    })
+
     mapRef.current = map
 
     return () => {
       map.remove()
     }
-  }, [JAWG_ACCESS_TOKEN]) // Only run once on mount
+  }, [JAWG_ACCESS_TOKEN])
 
   // Update map center when user location changes
   useEffect(() => {
     if (mapRef.current && userLocation) {
-      mapRef.current.setCenter([userLocation.lng, userLocation.lat])
+      mapRef.current.flyTo({
+        center: [userLocation.lng, userLocation.lat],
+        duration: 1500,
+        essential: true
+      })
     }
   }, [userLocation])
 
-  // Update markers when restaurants change
+  // Update markers when restaurants change with staggered animations
   useEffect(() => {
-    if (!mapRef.current) return
+    if (!mapRef.current || !mapLoaded) return
 
-    // Clear existing markers
-    markersRef.current.forEach(marker => marker.remove())
+    // Clear existing markers with fade out
+    markersRef.current.forEach(marker => {
+      marker.getElement().style.opacity = '0'
+      setTimeout(() => marker.remove(), 300)
+    })
     markersRef.current = []
 
-    // Add user location marker
-    const userMarkerEl = document.createElement('div')
-    userMarkerEl.style.width = '30px'
-    userMarkerEl.style.height = '30px'
-    userMarkerEl.style.borderRadius = '50%'
-    userMarkerEl.style.backgroundColor = '#FF0000'
-    userMarkerEl.style.border = '4px solid white'
-    userMarkerEl.style.cursor = 'pointer'
-    userMarkerEl.style.display = 'flex'
-    userMarkerEl.style.alignItems = 'center'
-    userMarkerEl.style.justifyContent = 'center'
-    userMarkerEl.style.fontSize = '16px'
-    userMarkerEl.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)'
-    userMarkerEl.innerHTML = '📍'
-    userMarkerEl.title = '📍 Vous êtes ici'
-    userMarkerEl.addEventListener('click', () => {
-      console.log('🔴 Clicked user marker at:', userLocation)
-      alert('Votre position: ' + JSON.stringify(userLocation))
+    // Add user location marker with pulse animation
+    const userMarkerEl = createUserMarker()
+    const userMarker = new maplibregl.Marker({ 
+      element: userMarkerEl,
+      anchor: 'center'
     })
-
-    const userMarker = new maplibregl.Marker({ element: userMarkerEl })
       .setLngLat([userLocation.lng, userLocation.lat])
       .addTo(mapRef.current)
     markersRef.current.push(userMarker)
 
-    // Add restaurant markers
-    restaurants.forEach(restaurant => {
-      const el = document.createElement('div')
-      el.style.width = '40px'
-      el.style.height = '40px'
-      el.style.cursor = 'pointer'
-      el.innerHTML = `
-        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="20" cy="20" r="18" fill="#10B981" stroke="white" stroke-width="3"/>
-          <text x="20" y="27" text-anchor="middle" font-size="20">🍽️</text>
-        </svg>
-      `
-      el.title = restaurant.name
+    // Add restaurant markers with staggered entry
+    restaurants.forEach((restaurant, index) => {
+      const el = createRestaurantMarker(restaurant, index)
+      
       el.addEventListener('click', () => {
         setSelectedRestaurant(restaurant)
       })
-
-      const marker = new maplibregl.Marker({ element: el })
+      
+      const marker = new maplibregl.Marker({ 
+        element: el,
+        anchor: 'center'
+      })
         .setLngLat([restaurant.position.lng, restaurant.position.lat])
         .addTo(mapRef.current)
+      
       markersRef.current.push(marker)
     })
-  }, [restaurants, userLocation])
-
-  const handleMarkerClick = (restaurant) => {
-    setSelectedRestaurant(restaurant)
-  }
+  }, [restaurants, userLocation, mapLoaded])
 
   const handleBackToAllergies = () => {
     navigate('/')
   }
 
+  // No API keys - show setup screen
   if (!GOOGLE_MAPS_API_KEY || !JAWG_ACCESS_TOKEN) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+      <div className="min-h-screen bg-[#0a0f1a] flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full bg-[#111827] rounded-3xl shadow-2xl shadow-black/50 p-8 text-center border border-white/5">
           <div className="text-6xl mb-4">🗺️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          <h2 className="text-2xl font-bold text-white mb-4">
             Configuration requise
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-white/60 mb-6">
             Pour afficher la carte, vous devez ajouter vos clés API.
           </p>
-          <div className="bg-gray-100 p-4 rounded-lg mb-6 text-left">
-            <p className="text-sm font-mono text-gray-700 mb-2">
-              1. Créez un fichier <code className="bg-white px-2 py-1 rounded">.env</code> à la racine du projet
+          <div className="bg-black/30 p-4 rounded-xl mb-6 text-left border border-white/5">
+            <p className="text-sm font-mono text-white/70 mb-2">
+              1. Créez un fichier <code className="bg-white/10 px-2 py-1 rounded text-emerald-400">.env</code>
             </p>
-            <p className="text-sm font-mono text-gray-700 mb-2">
-              2. Ajoutez: <code className="bg-white px-2 py-1 rounded">VITE_GOOGLE_MAPS_API_KEY=votre_clé_api</code>
+            <p className="text-sm font-mono text-white/70 mb-2">
+              2. <code className="bg-white/10 px-2 py-1 rounded text-emerald-400">VITE_GOOGLE_MAPS_API_KEY=...</code>
             </p>
-            <p className="text-sm font-mono text-gray-700 mb-2">
-              3. Ajoutez: <code className="bg-white px-2 py-1 rounded">VITE_JAWG_ACCESS_TOKEN=votre_token_jawg</code>
-            </p>
-            <p className="text-sm font-mono text-gray-700 mb-2">
-              4. Clé Google Maps: <a href="https://developers.google.com/maps" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google Maps Platform</a>
-            </p>
-            <p className="text-sm font-mono text-gray-700">
-              5. Token Jawg: <a href="https://www.jawg.io/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Jawg Maps</a>
+            <p className="text-sm font-mono text-white/70 mb-2">
+              3. <code className="bg-white/10 px-2 py-1 rounded text-emerald-400">VITE_JAWG_ACCESS_TOKEN=...</code>
             </p>
           </div>
 
-          {/* Demo mode with restaurant list */}
-          <div className="border-t pt-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Mode démo - Vue en liste
-            </h3>
-            {isSearching ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">Recherche de restaurants...</p>
-              </div>
-            ) : restaurants.length > 0 ? (
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {restaurants.map(restaurant => (
-                  <button
-                    key={restaurant.id}
-                    onClick={() => setSelectedRestaurant(restaurant)}
-                    className="w-full p-4 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors text-left"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-800">{restaurant.name}</h4>
-                        <p className="text-xs text-emerald-600 font-medium mb-1">{restaurant.type}</p>
-                        <p className="text-sm text-gray-600">{restaurant.address}</p>
-                      </div>
-                      <div className="flex items-center ml-2">
-                        <span className="text-yellow-500 mr-1">★</span>
-                        <span className="font-semibold text-gray-700">{restaurant.rating.toFixed(1)}</span>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <div className="text-4xl mb-2">🔍</div>
-                <p>Aucun restaurant trouvé dans votre zone</p>
-              </div>
-            )}</div>
-
           <button
             onClick={handleBackToAllergies}
-            className="mt-6 text-emerald-600 hover:text-emerald-700 font-medium"
+            className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
           >
             ← Modifier mes allergies
           </button>
         </div>
-
-        {selectedRestaurant && (
-          <RestaurantModal
-            restaurant={selectedRestaurant}
-            onClose={() => setSelectedRestaurant(null)}
-            userAllergies={userAllergies}
-          />
-        )}
       </div>
     )
   }
 
   return (
-    <div className="relative">
-      {/* ✨ NEW REDESIGNED HEADER */}
+    <div className="relative w-full h-screen overflow-hidden bg-[#0a0f1a]">
+      {/* Atmospheric vignette overlay */}
+      <div className="absolute inset-0 pointer-events-none z-10 vignette-overlay"></div>
+      
+      {/* Top gradient for header blend */}
+      <div className="absolute top-0 left-0 right-0 h-32 pointer-events-none z-10 bg-gradient-to-b from-black/40 to-transparent"></div>
+      
+      {/* Bottom gradient for depth */}
+      <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none z-10 bg-gradient-to-t from-black/30 to-transparent"></div>
+
+      {/* Premium dark header */}
       <MapHeader 
         allergiesCount={userAllergies.length}
         restaurantsCount={restaurants.length}
@@ -517,9 +462,30 @@ function MapPage() {
         onBack={handleBackToAllergies}
       />
 
-      {/* MapLibre Map with Jawg tiles */}
-      {JAWG_ACCESS_TOKEN && (
-        <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
+      {/* Search radius indicator */}
+      {isSearching && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-5 pointer-events-none">
+          <div className="search-radius-pulse"></div>
+        </div>
+      )}
+
+      {/* MapLibre Map */}
+      <div 
+        ref={mapContainerRef} 
+        className="w-full h-full"
+        style={{ background: '#0a0f1a' }}
+      />
+
+      {/* Restaurant count floating badge */}
+      {!isSearching && restaurants.length > 0 && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-fade-up">
+          <div className="header-glass px-4 py-2 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+            <span className="text-white/80 text-sm font-medium">
+              {restaurants.length} restaurants végé à proximité
+            </span>
+          </div>
+        </div>
       )}
 
       {/* Restaurant modal */}
