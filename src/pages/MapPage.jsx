@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import RestaurantModal from '../components/RestaurantModal'
-import { fetchRestaurantMenu } from '../services/perplexityService'
 
 const defaultCenter = {
   lat: 48.8566,
@@ -459,7 +458,7 @@ function MapPage() {
   }
 
   // No API keys - show setup screen
-  if (!GOOGLE_MAPS_API_KEY || !JAWG_ACCESS_TOKEN) {
+  if (!JAWG_ACCESS_TOKEN || !GOOGLE_MAPS_API_KEY) {
     return (
       <div className={`min-h-screen flex items-center justify-center p-4 ${isDarkMode ? 'bg-[#0a0f1a]' : 'bg-gray-100'}`}>
         <div className={`max-w-2xl w-full rounded-3xl shadow-2xl p-8 text-center border ${isDarkMode ? 'bg-[#111827] border-white/5' : 'bg-white border-gray-200'}`}>

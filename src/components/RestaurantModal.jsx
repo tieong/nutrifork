@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
-import { fetchRestaurantMenu } from '../services/perplexityService'
+import { getMockDishesWithDelay } from '../services/mockDishesService'
+
+// Set to true to use mock dishes, false to use Perplexity API
+const USE_MOCK_DISHES = true
 
 function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true }) {
   const [dishes, setDishes] = useState(restaurant?.dishes || [])
@@ -9,21 +12,28 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
   useEffect(() => {
     if (!restaurant) return
 
+    // Si les plats sont déjà chargés, les utiliser
     if (restaurant.dishes && restaurant.dishes.length > 0) {
       setDishes(restaurant.dishes)
       return
     }
-    
+
     const loadMenu = async () => {
       setIsLoading(true)
       setError(null)
+      
       try {
-        const menuData = await fetchRestaurantMenu(restaurant.name, restaurant.address)
-	if (menuData && Array.isArray(menuData) && menuData.length > 0) {
-          setDishes(menuData)
-        } else if (menuData && Array.isArray(menuData)) {
-          // Empty array - no dishes found
-          setDishes([])
+        if (USE_MOCK_DISHES) {
+          // Utiliser les plats mock
+          const mockDishes = await getMockDishesWithDelay(restaurant, 600)
+          setDishes(mockDishes)
+        } else {
+          // Utiliser Perplexity (quand on aura l'API)
+          const { fetchRestaurantMenu } = await import('../services/perplexityService')
+          const menuData = await fetchRestaurantMenu(restaurant.name, restaurant.address)
+          if (menuData && menuData.dishes) {
+            setDishes(menuData.dishes)
+          }
         }
       } catch (err) {
         console.error('Error fetching menu:', err)
@@ -38,20 +48,36 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
 
   if (!restaurant) return null
 
-  const filterDishesByAllergies = (dishes, allergies) => {
-    if (!allergies || allergies.length === 0) {
-      return dishes
-    }
-
-    return dishes.filter(dish => {
-      const hasAllergen = dish.allergens?.some(allergen =>
-        allergies.includes(allergen)
+  // Vérifie si un plat est "safe" pour l'utilisateur (végétarien + sans allergènes)
+  const isDishSafe = (dish) => {
+    if (!dish.vegetarian) return false
+    
+    if (userAllergies && userAllergies.length > 0) {
+      const dishAllergens = (dish.allergens || []).map(a => a.toLowerCase())
+      const userAllergensList = userAllergies.map(a => a.toLowerCase())
+      const hasAllergen = dishAllergens.some(allergen => 
+        userAllergensList.some(userAllergen => 
+          allergen.includes(userAllergen) || userAllergen.includes(allergen)
+        )
       )
-      return !hasAllergen
-    })
+      if (hasAllergen) return false
+    }
+    
+    return true
   }
 
-  const availableDishes = filterDishesByAllergies(dishes, userAllergies)
+  // Trier les plats : safe en premier, puis le reste
+  const sortedDishes = [...dishes].sort((a, b) => {
+    const aIsSafe = isDishSafe(a)
+    const bIsSafe = isDishSafe(b)
+    if (aIsSafe && !bIsSafe) return -1
+    if (!aIsSafe && bIsSafe) return 1
+    return 0
+  })
+
+  // Compter les plats safe pour le score
+  const safeCount = dishes.filter(d => isDishSafe(d)).length
+  const veggieScore = dishes.length > 0 ? Math.round((safeCount / dishes.length) * 100) : 0
 
   return (
     <div 
@@ -97,6 +123,27 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
                 
                 {/* Rating badge */}
                 <div className="flex items-center gap-3 mt-4">
+                  {/* Score végé - basé sur le % de plats compatibles */}
+                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border
+                    ${veggieScore >= 50 
+                      ? (isDarkMode ? 'bg-emerald-500/20 border-emerald-500/30' : 'bg-emerald-100 border-emerald-200')
+                      : veggieScore >= 25
+                        ? (isDarkMode ? 'bg-amber-500/20 border-amber-500/30' : 'bg-amber-100 border-amber-200')
+                        : (isDarkMode ? 'bg-red-500/20 border-red-500/30' : 'bg-red-100 border-red-200')
+                    }`}>
+                    <span className="text-base">🌱</span>
+                    <span className={`font-bold ${
+                      veggieScore >= 50 
+                        ? (isDarkMode ? 'text-emerald-300' : 'text-emerald-700')
+                        : veggieScore >= 25
+                          ? (isDarkMode ? 'text-amber-300' : 'text-amber-700')
+                          : (isDarkMode ? 'text-red-300' : 'text-red-700')
+                    }`}>
+                      {veggieScore}%
+                    </span>
+                  </div>
+                  
+                  {/* Note Google */}
                   <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border
                     ${isDarkMode ? 'bg-white/10 border-white/10' : 'bg-white border-gray-200 shadow-sm'}`}>
                     <svg className="w-4 h-4 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
@@ -107,18 +154,10 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
                     </span>
                   </div>
                   
-                  {userAllergies && userAllergies.length > 0 && (
-                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border
-                      ${isDarkMode 
-                        ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' 
-                        : 'bg-amber-50 text-amber-700 border-amber-200'
-                      }`}>
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                      <span>Filtré ({userAllergies.length})</span>
-                    </div>
-                  )}
+                  {/* Compteur plats safe */}
+                  <span className={`text-xs ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>
+                    {safeCount}/{dishes.length} pour vous
+                  </span>
                 </div>
               </div>
               
@@ -141,17 +180,6 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
 
         {/* Content */}
         <div className="p-6 max-h-[50vh] overflow-y-auto">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className={`text-sm font-semibold uppercase tracking-wider ${isDarkMode ? 'text-white/60' : 'text-gray-400'}`}>
-              Menu disponible
-            </h3>
-            {!isLoading && availableDishes.length > 0 && (
-              <span className={`text-xs font-medium ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                {availableDishes.length} plat{availableDishes.length > 1 ? 's' : ''}
-              </span>
-            )}
-          </div>
-
           {isLoading ? (
             <div className="text-center py-12">
               <div className="relative w-16 h-16 mx-auto mb-4">
@@ -165,87 +193,99 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
               <div className="text-4xl mb-3">😔</div>
               <p className={isDarkMode ? 'text-white/60' : 'text-gray-500'}>{error}</p>
             </div>
-          ) : availableDishes.length === 0 ? (
+          ) : dishes.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-5xl mb-4">🥬</div>
-              <p className={`mb-2 ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>Aucun plat disponible</p>
-              <p className={`text-sm ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>avec vos restrictions alimentaires</p>
+              <div className="text-5xl mb-4">🍽️</div>
+              <p className={`mb-2 ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>Menu non disponible</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {availableDishes.map((dish, index) => (
-                <div
-                  key={dish.id || index}
-                  className={`group rounded-2xl p-4 transition-all duration-300 border
-                    ${isDarkMode 
-                      ? 'bg-white/5 hover:bg-white/10 border-white/5 hover:border-white/10' 
-                      : 'bg-gray-50 hover:bg-emerald-50 border-gray-100 hover:border-emerald-200'
-                    }`}
-                  style={{
-                    animation: `fade-in 0.3s ease ${index * 0.05}s backwards`
-                  }}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className={`font-semibold transition-colors
-                      ${isDarkMode 
-                        ? 'text-white group-hover:text-emerald-300' 
-                        : 'text-gray-800 group-hover:text-emerald-700'
+              {sortedDishes.map((dish, index) => {
+                const isSafe = isDishSafe(dish)
+                return (
+                  <div
+                    key={dish.id || index}
+                    className={`rounded-2xl p-4 transition-all duration-300 border
+                      ${isSafe 
+                        ? (isDarkMode 
+                            ? 'bg-emerald-500/10 border-emerald-500/20 hover:border-emerald-500/40' 
+                            : 'bg-emerald-50 border-emerald-200 hover:border-emerald-300')
+                        : (isDarkMode 
+                            ? 'bg-white/5 border-white/5 opacity-50' 
+                            : 'bg-gray-50 border-gray-100 opacity-50')
+                      }`}
+                    style={{ animation: `fade-in 0.3s ease ${index * 0.04}s backwards` }}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                        {isSafe && (
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium
+                            ${isDarkMode ? 'bg-emerald-500/30 text-emerald-300' : 'bg-emerald-200 text-emerald-800'}`}>
+                            ✓
+                          </span>
+                        )}
+                        <h4 className={`font-semibold ${isSafe 
+                          ? (isDarkMode ? 'text-white' : 'text-gray-800')
+                          : (isDarkMode ? 'text-white/60' : 'text-gray-500')
+                        }`}>
+                          {dish.name}
+                        </h4>
+                      </div>
+                      <span className={`font-bold text-lg ml-4 shrink-0 ${isSafe 
+                        ? (isDarkMode ? 'text-emerald-400' : 'text-emerald-600')
+                        : (isDarkMode ? 'text-white/40' : 'text-gray-400')
                       }`}>
-                      {dish.name}
-                    </h4>
-                    <span className={`font-bold text-lg ml-4 shrink-0 ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                      {dish.price?.toFixed(2) || '?'}€
-                    </span>
-                  </div>
-                  {dish.description && (
-                    <p className={`text-sm mb-3 leading-relaxed ${isDarkMode ? 'text-white/50' : 'text-gray-500'}`}>
-                      {dish.description}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap gap-2">
-                    {dish.vegetarian && (
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium border
-                        ${isDarkMode 
-                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
-                          : 'bg-emerald-100 text-emerald-700 border-emerald-200'
-                        }`}>
-                        🌱 Végétarien
+                        {dish.price?.toFixed(2) || '?'}€
                       </span>
+                    </div>
+                    
+                    {dish.description && (
+                      <p className={`text-sm mb-3 leading-relaxed ${isSafe
+                        ? (isDarkMode ? 'text-white/60' : 'text-gray-600')
+                        : (isDarkMode ? 'text-white/30' : 'text-gray-400')
+                      }`}>
+                        {dish.description}
+                      </p>
                     )}
-                    {dish.vegan && (
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium border
-                        ${isDarkMode 
-                          ? 'bg-green-500/20 text-green-300 border-green-500/30' 
-                          : 'bg-green-100 text-green-700 border-green-200'
-                        }`}>
-                        🌿 Vegan
-                      </span>
-                    )}
-                    {dish.allergens && dish.allergens.length === 0 ? (
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium border
-                        ${isDarkMode 
-                          ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' 
-                          : 'bg-blue-50 text-blue-600 border-blue-200'
-                        }`}>
-                        ✓ Sans allergènes
-                      </span>
-                    ) : (
-                      dish.allergens?.map(allergen => (
-                        <span
-                          key={allergen}
-                          className={`text-xs px-2.5 py-1 rounded-full border
-                            ${isDarkMode 
-                              ? 'bg-white/5 text-white/50 border-white/10' 
-                              : 'bg-gray-100 text-gray-500 border-gray-200'
-                            }`}
-                        >
-                          {allergen}
+                    
+                    <div className="flex flex-wrap gap-1.5">
+                      {/* Badge végé/vegan pour les plats safe */}
+                      {isSafe && dish.vegan && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium
+                          ${isDarkMode ? 'bg-green-500/20 text-green-300' : 'bg-green-100 text-green-700'}`}>
+                          🌿 Vegan
                         </span>
-                      ))
-                    )}
+                      )}
+                      {isSafe && !dish.vegan && dish.vegetarian && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium
+                          ${isDarkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}>
+                          🌱 Végétarien
+                        </span>
+                      )}
+                      {isSafe && dish.allergens?.length === 0 && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium
+                          ${isDarkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                          Sans allergènes
+                        </span>
+                      )}
+                      
+                      {/* Badge pour les plats non-safe */}
+                      {!isSafe && !dish.vegetarian && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full
+                          ${isDarkMode ? 'bg-red-500/20 text-red-300' : 'bg-red-100 text-red-600'}`}>
+                          🍖 Non végé
+                        </span>
+                      )}
+                      {!isSafe && dish.vegetarian && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full
+                          ${isDarkMode ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-600'}`}>
+                          ⚠️ Contient allergène
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
