@@ -1,0 +1,78 @@
+.restaurant-map {
+  height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+}
+
+.map-header {
+  background: white;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.back-button {
+  background: transparent;
+  border: 2px solid #667eea;
+  color: #667eea;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.back-button:hover {
+  background: #667eea;
+  color: white;
+}
+
+.selected-allergies {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.selected-allergies strong {
+  color: #333;
+}
+
+.map-container {
+  flex: 1;
+  position: relative;
+}
+
+.restaurant-count {
+  background: white;
+  padding: 0.75rem 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  color: #667eea;
+  border-top: 2px solid #e9ecef;
+}
+
+@media (max-width: 768px) {
+  .map-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .back-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .selected-allergies {
+    font-size: 0.8rem;
+  }
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
