@@ -1,20 +1,16 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 import RestaurantModal from '../components/RestaurantModal'
-
-const mapContainerStyle = {
-  width: '100%',
-  height: '100vh'
-}
 
 const defaultCenter = {
   lat: 48.8566,
   lng: 2.3522
 }
 
-// Libraries to load for Google Maps
-const libraries = ['places', 'marker']
+// Libraries to load for Google Places API
+const libraries = ['places']
 
 // Helper function to generate mock dishes for a restaurant
 const generateMockDishes = (restaurantName) => {
@@ -62,16 +58,39 @@ function MapPage() {
   const [userLocation, setUserLocation] = useState(defaultCenter)
   const [restaurants, setRestaurants] = useState([])
   const [isSearching, setIsSearching] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
   const navigate = useNavigate()
+  const mapContainerRef = useRef(null)
+  const mapRef = useRef(null)
+  const markersRef = useRef([])
 
-  // IMPORTANT: Replace with your own Google Maps API key
+  // API Keys
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''
+  const JAWG_ACCESS_TOKEN = import.meta.env.VITE_JAWG_ACCESS_TOKEN || ''
 
-  // Load Google Maps API
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries,
-  })
+  // Load Google Places API script
+  useEffect(() => {
+    if (!GOOGLE_MAPS_API_KEY) {
+      setIsLoaded(true)
+      return
+    }
+
+    const loadGooglePlaces = () => {
+      if (window.google?.maps?.importLibrary) {
+        setIsLoaded(true)
+        return
+      }
+
+      const script = document.createElement('script')
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&v=weekly`
+      script.async = true
+      script.defer = true
+      script.onload = () => setIsLoaded(true)
+      document.head.appendChild(script)
+    }
+
+    loadGooglePlaces()
+  }, [GOOGLE_MAPS_API_KEY])
 
   // Search for nearby restaurants using Google Places API
   const searchNearbyRestaurants = useCallback(async (location) => {
@@ -205,6 +224,89 @@ function MapPage() {
     }
   }, [isLoaded, userLocation, searchNearbyRestaurants])
 
+  // Initialize MapLibre map
+  useEffect(() => {
+    if (!mapContainerRef.current || !JAWG_ACCESS_TOKEN) return
+
+    const map = new maplibregl.Map({
+      container: mapContainerRef.current,
+      style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${JAWG_ACCESS_TOKEN}`,
+      center: [userLocation.lng, userLocation.lat],
+      zoom: 14
+    })
+
+    map.addControl(new maplibregl.NavigationControl(), 'top-right')
+    mapRef.current = map
+
+    return () => {
+      map.remove()
+    }
+  }, [JAWG_ACCESS_TOKEN]) // Only run once on mount
+
+  // Update map center when user location changes
+  useEffect(() => {
+    if (mapRef.current && userLocation) {
+      mapRef.current.setCenter([userLocation.lng, userLocation.lat])
+    }
+  }, [userLocation])
+
+  // Update markers when restaurants change
+  useEffect(() => {
+    if (!mapRef.current) return
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove())
+    markersRef.current = []
+
+    // Add user location marker
+    const userMarkerEl = document.createElement('div')
+    userMarkerEl.style.width = '30px'
+    userMarkerEl.style.height = '30px'
+    userMarkerEl.style.borderRadius = '50%'
+    userMarkerEl.style.backgroundColor = '#FF0000'
+    userMarkerEl.style.border = '4px solid white'
+    userMarkerEl.style.cursor = 'pointer'
+    userMarkerEl.style.display = 'flex'
+    userMarkerEl.style.alignItems = 'center'
+    userMarkerEl.style.justifyContent = 'center'
+    userMarkerEl.style.fontSize = '16px'
+    userMarkerEl.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)'
+    userMarkerEl.innerHTML = '📍'
+    userMarkerEl.title = '📍 Vous êtes ici'
+    userMarkerEl.addEventListener('click', () => {
+      console.log('🔴 Clicked user marker at:', userLocation)
+      alert('Votre position: ' + JSON.stringify(userLocation))
+    })
+
+    const userMarker = new maplibregl.Marker({ element: userMarkerEl })
+      .setLngLat([userLocation.lng, userLocation.lat])
+      .addTo(mapRef.current)
+    markersRef.current.push(userMarker)
+
+    // Add restaurant markers
+    restaurants.forEach(restaurant => {
+      const el = document.createElement('div')
+      el.style.width = '40px'
+      el.style.height = '40px'
+      el.style.cursor = 'pointer'
+      el.innerHTML = `
+        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="18" fill="#10B981" stroke="white" stroke-width="3"/>
+          <text x="20" y="27" text-anchor="middle" font-size="20">🍽️</text>
+        </svg>
+      `
+      el.title = restaurant.name
+      el.addEventListener('click', () => {
+        setSelectedRestaurant(restaurant)
+      })
+
+      const marker = new maplibregl.Marker({ element: el })
+        .setLngLat([restaurant.position.lng, restaurant.position.lat])
+        .addTo(mapRef.current)
+      markersRef.current.push(marker)
+    })
+  }, [restaurants, userLocation])
+
   const handleMarkerClick = (restaurant) => {
     setSelectedRestaurant(restaurant)
   }
@@ -213,7 +315,7 @@ function MapPage() {
     navigate('/')
   }
 
-  if (!GOOGLE_MAPS_API_KEY) {
+  if (!GOOGLE_MAPS_API_KEY || !JAWG_ACCESS_TOKEN) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-4">
         <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 text-center">
@@ -222,7 +324,7 @@ function MapPage() {
             Configuration requise
           </h2>
           <p className="text-gray-600 mb-6">
-            Pour afficher la carte, vous devez ajouter votre clé API Google Maps.
+            Pour afficher la carte, vous devez ajouter vos clés API.
           </p>
           <div className="bg-gray-100 p-4 rounded-lg mb-6 text-left">
             <p className="text-sm font-mono text-gray-700 mb-2">
@@ -231,8 +333,14 @@ function MapPage() {
             <p className="text-sm font-mono text-gray-700 mb-2">
               2. Ajoutez: <code className="bg-white px-2 py-1 rounded">VITE_GOOGLE_MAPS_API_KEY=votre_clé_api</code>
             </p>
+            <p className="text-sm font-mono text-gray-700 mb-2">
+              3. Ajoutez: <code className="bg-white px-2 py-1 rounded">VITE_JAWG_ACCESS_TOKEN=votre_token_jawg</code>
+            </p>
+            <p className="text-sm font-mono text-gray-700 mb-2">
+              4. Clé Google Maps: <a href="https://developers.google.com/maps" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google Maps Platform</a>
+            </p>
             <p className="text-sm font-mono text-gray-700">
-              3. Obtenez une clé sur: <a href="https://developers.google.com/maps" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google Maps Platform</a>
+              5. Token Jawg: <a href="https://www.jawg.io/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Jawg Maps</a>
             </p>
           </div>
 
@@ -327,126 +435,9 @@ function MapPage() {
         </button>
       </div>
 
-      {/* Google Map */}
-      {isLoaded && (
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          center={userLocation}
-          zoom={14}
-          options={{
-            zoomControl: true,
-            streetViewControl: false,
-            mapTypeControl: false,
-            fullscreenControl: false,
-            clickableIcons: false, // Disable clicking on default POIs
-            // Hide all default POIs (points of interest) and transit
-            styles: [
-              {
-                featureType: 'poi',
-                elementType: 'labels',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'poi.business',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'poi.park',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'poi.attraction',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'poi.government',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'poi.medical',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'poi.place_of_worship',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'poi.school',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'poi.sports_complex',
-                stylers: [{ visibility: 'off' }]
-              },
-              // Hide transit stations (metro, bus, train)
-              {
-                featureType: 'transit',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'transit.station',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'transit.station.airport',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'transit.station.bus',
-                stylers: [{ visibility: 'off' }]
-              },
-              {
-                featureType: 'transit.station.rail',
-                stylers: [{ visibility: 'off' }]
-              }
-            ]
-          }}
-        >
-          {/* User location marker - Your current position */}
-          {userLocation && (
-            <Marker
-              position={userLocation}
-              icon={{
-                path: window.google?.maps?.SymbolPath?.CIRCLE || 0,
-                scale: 15,
-                fillColor: '#FF0000',
-                fillOpacity: 1,
-                strokeColor: '#FFFFFF',
-                strokeWeight: 4,
-              }}
-              title="📍 Vous êtes ici"
-              label={{
-                text: "📍",
-                color: "white",
-                fontSize: "18px",
-                fontWeight: "bold"
-              }}
-              zIndex={1000}
-              onClick={() => {
-                console.log('🔴 Clicked user marker at:', userLocation)
-                alert('Votre position: ' + JSON.stringify(userLocation))
-              }}
-            />
-          )}
-
-          {/* Restaurant markers */}
-          {restaurants.map(restaurant => (
-            <Marker
-              key={restaurant.id}
-              position={restaurant.position}
-              onClick={() => handleMarkerClick(restaurant)}
-              icon={{
-                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                  <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="20" r="18" fill="#10B981" stroke="white" stroke-width="3"/>
-                    <text x="20" y="27" text-anchor="middle" font-size="20">🍽️</text>
-                  </svg>
-                `),
-                scaledSize: new window.google.maps.Size(40, 40),
-              }}
-            />
-          ))}
-        </GoogleMap>
+      {/* MapLibre Map with Jawg tiles */}
+      {JAWG_ACCESS_TOKEN && (
+        <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
       )}
 
       {/* Restaurant modal */}

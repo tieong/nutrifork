@@ -7,7 +7,7 @@ Application web pour le hackathon "Hack the Fork" permettant de trouver des rest
 - **Sélection d'allergies** : Choisissez vos allergies alimentaires parmi les plus courantes
 - **Géolocalisation** : Détection automatique de votre position
 - **Recherche de proximité** : Trouvez les restaurants dans un rayon de 1km via Google Places API
-- **Carte interactive** : Visualisez les restaurants autour de vous sur Google Maps avec des marqueurs
+- **Carte interactive** : Visualisez les restaurants autour de vous sur une carte MapLibre avec tuiles Jawg
 - **Filtrage intelligent** : Affichez uniquement les plats végétariens sans vos allergènes
 - **Détails des plats** : Consultez les menus avec descriptions et allergènes au clic sur les marqueurs
 
@@ -20,14 +20,17 @@ Application web pour le hackathon "Hack the Fork" permettant de trouver des rest
 npm install
 ```
 
-3. Configurez votre clé API Google Maps :
+3. Configurez vos clés API :
    - Copiez le fichier `.env.example` en `.env`
-   - Obtenez une clé API sur [Google Maps Platform](https://developers.google.com/maps/documentation/javascript/get-api-key)
-   - Remplacez `your_google_maps_api_key_here` par votre clé
+   - **Google Maps API** (pour la recherche de restaurants) : Obtenez une clé sur [Google Maps Platform](https://developers.google.com/maps/documentation/javascript/get-api-key)
+   - **Jawg Maps** (pour les tuiles de carte) : Créez un compte gratuit sur [Jawg.io](https://www.jawg.io/) et obtenez un token d'accès
+   - Remplacez les valeurs dans le fichier `.env`
 
 ```bash
 cp .env.example .env
-# Éditez .env et ajoutez votre clé API
+# Éditez .env et ajoutez vos clés API :
+# VITE_GOOGLE_MAPS_API_KEY=votre_clé_google
+# VITE_JAWG_ACCESS_TOKEN=votre_token_jawg
 ```
 
 4. Lancez l'application :
@@ -49,13 +52,14 @@ npm run dev
 - **React 18** - Framework UI
 - **Vite** - Build tool rapide
 - **React Router** - Navigation
-- **Google Maps API** - Cartographie
+- **MapLibre GL JS** - Cartographie open-source
+- **Jawg Maps** - Tuiles de carte vectorielles
+- **Google Places API** - Recherche de restaurants
 - **Tailwind CSS** - Styling
-- **@react-google-maps/api** - Intégration Google Maps
 
 ## 📝 Mode démo
 
-Si vous n'avez pas de clé API Google Maps, l'application fonctionne en mode démo avec une liste de restaurants cliquables.
+Si vous n'avez pas de clés API (Google Maps ou Jawg), l'application fonctionne en mode démo avec une liste de restaurants cliquables.
 
 ## 🗺️ Structure du projet
 
