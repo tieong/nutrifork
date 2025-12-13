@@ -83,13 +83,21 @@ function MapPage() {
       const { Place, SearchNearbyRankPreference } = await window.google.maps.importLibrary('places')
 
       const request = {
-        fields: ['displayName', 'location', 'formattedAddress', 'rating', 'types', 'businessStatus'],
+        fields: ['displayName', 'location', 'formattedAddress', 'rating', 'types', 'businessStatus', 'primaryType'],
         locationRestriction: {
           center: location,
-          radius: 5000, // 5km radius
+          radius: 1000, // 1km radius
         },
-        includedPrimaryTypes: ['restaurant'],
-        maxResultCount: 20,
+        // Filter for restaurants, cafes, and food establishments only
+        // Up to 5 types can be specified to ensure we only get food/drink places
+        includedPrimaryTypes: [
+          'restaurant',
+          'cafe',
+          'bar',
+          'bakery',
+          'meal_takeaway'
+        ],
+        maxResultCount: 20, // Maximum autorisé par l'API
         rankPreference: SearchNearbyRankPreference.POPULARITY,
         language: 'fr',
         region: 'fr',
@@ -98,19 +106,57 @@ function MapPage() {
       const { places } = await Place.searchNearby(request)
 
       if (places && places.length > 0) {
+        console.log('Places found:', places.length)
+
+        // List of types to exclude (non-food/drink establishments)
+        const excludedTypes = ['museum', 'park', 'tourist_attraction', 'art_gallery', 'library',
+                               'gym', 'spa', 'church', 'mosque', 'synagogue', 'school', 'hospital',
+                               'amusement_park', 'aquarium', 'zoo', 'stadium', 'shopping_mall',
+                               'store', 'clothing_store', 'book_store', 'night_club']
+
         // Transform places to match our restaurant structure
-        const transformedRestaurants = places.map((place, index) => ({
-          id: place.id || `restaurant-${index}`,
-          name: place.displayName || 'Restaurant',
-          position: {
-            lat: place.location?.lat() || location.lat,
-            lng: place.location?.lng() || location.lng
-          },
-          address: place.formattedAddress || 'Adresse non disponible',
-          type: 'Restaurant',
-          rating: place.rating || 4.0,
-          dishes: generateMockDishes(place.displayName || `Restaurant ${index}`)
-        }))
+        const transformedRestaurants = places
+          .filter(place => {
+            // Log for debugging
+            console.log('Checking place:', place.displayName, 'Primary type:', place.primaryType, 'All types:', place.types)
+
+            // Get all types (both primary and secondary)
+            const placeTypes = place.types || []
+
+            // Exclude if ANY type is in the excluded list (museums, parks, etc.)
+            const hasExcludedType = placeTypes.some(type => excludedTypes.includes(type))
+            if (hasExcludedType) {
+              console.log('❌ Excluding (has excluded type):', place.displayName, placeTypes)
+              return false
+            }
+
+            // If it passed the API filters (includedPrimaryTypes) and doesn't have excluded types, include it
+            console.log('✅ Including:', place.displayName, 'Type:', place.primaryType)
+            return true
+          })
+          .map((place, index) => {
+            // Get a user-friendly type name
+            const primaryType = place.primaryType || 'restaurant'
+            let typeDisplay = 'Restaurant'
+            if (primaryType.includes('cafe')) typeDisplay = 'Café'
+            else if (primaryType.includes('bar')) typeDisplay = 'Bar'
+            else if (primaryType.includes('bakery')) typeDisplay = 'Boulangerie'
+            else if (primaryType.includes('vegetarian')) typeDisplay = 'Restaurant végétarien'
+            else if (primaryType.includes('vegan')) typeDisplay = 'Restaurant vegan'
+
+            return {
+              id: place.id || `restaurant-${index}`,
+              name: place.displayName || 'Restaurant',
+              position: {
+                lat: place.location?.lat() || location.lat,
+                lng: place.location?.lng() || location.lng
+              },
+              address: place.formattedAddress || 'Adresse non disponible',
+              type: typeDisplay,
+              rating: place.rating || 4.0,
+              dishes: generateMockDishes(place.displayName || `Restaurant ${index}`)
+            }
+          })
 
         setRestaurants(transformedRestaurants)
       } else {
@@ -138,13 +184,17 @@ function MapPage() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           }
+          console.log('🔴 Votre position détectée:', newLocation)
           setUserLocation(newLocation)
         },
         (error) => {
-          console.log('Error getting location:', error)
+          console.error('❌ Erreur de géolocalisation:', error)
+          console.log('📍 Utilisation de la position par défaut (Paris):', defaultCenter)
           // Use default location (Paris) if geolocation fails
         }
       )
+    } else {
+      console.log('⚠️ Géolocalisation non disponible, utilisation de Paris')
     }
   }, [])
 
@@ -205,11 +255,12 @@ function MapPage() {
                     className="w-full p-4 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors text-left"
                   >
                     <div className="flex justify-between items-start">
-                      <div>
+                      <div className="flex-1">
                         <h4 className="font-semibold text-gray-800">{restaurant.name}</h4>
+                        <p className="text-xs text-emerald-600 font-medium mb-1">{restaurant.type}</p>
                         <p className="text-sm text-gray-600">{restaurant.address}</p>
                       </div>
-                      <div className="flex items-center">
+                      <div className="flex items-center ml-2">
                         <span className="text-yellow-500 mr-1">★</span>
                         <span className="font-semibold text-gray-700">{restaurant.rating.toFixed(1)}</span>
                       </div>
@@ -264,7 +315,7 @@ function MapPage() {
                 Recherche en cours...
               </span>
             ) : (
-              `${restaurants.length} restaurant(s) trouvé(s) à moins de 5km`
+              `${restaurants.length} restaurant(s) trouvé(s) à moins de 1km`
             )}
           </p>
         </div>
@@ -287,20 +338,96 @@ function MapPage() {
             streetViewControl: false,
             mapTypeControl: false,
             fullscreenControl: false,
+            clickableIcons: false, // Disable clicking on default POIs
+            // Hide all default POIs (points of interest) and transit
+            styles: [
+              {
+                featureType: 'poi',
+                elementType: 'labels',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'poi.business',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'poi.park',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'poi.attraction',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'poi.government',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'poi.medical',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'poi.place_of_worship',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'poi.school',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'poi.sports_complex',
+                stylers: [{ visibility: 'off' }]
+              },
+              // Hide transit stations (metro, bus, train)
+              {
+                featureType: 'transit',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'transit.station',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'transit.station.airport',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'transit.station.bus',
+                stylers: [{ visibility: 'off' }]
+              },
+              {
+                featureType: 'transit.station.rail',
+                stylers: [{ visibility: 'off' }]
+              }
+            ]
           }}
         >
-          {/* User location marker */}
-          <Marker
-            position={userLocation}
-            icon={{
-              path: window.google.maps.SymbolPath.CIRCLE,
-              scale: 8,
-              fillColor: '#3B82F6',
-              fillOpacity: 1,
-              strokeColor: '#FFFFFF',
-              strokeWeight: 2,
-            }}
-          />
+          {/* User location marker - Your current position */}
+          {userLocation && (
+            <Marker
+              position={userLocation}
+              icon={{
+                path: window.google?.maps?.SymbolPath?.CIRCLE || 0,
+                scale: 15,
+                fillColor: '#FF0000',
+                fillOpacity: 1,
+                strokeColor: '#FFFFFF',
+                strokeWeight: 4,
+              }}
+              title="📍 Vous êtes ici"
+              label={{
+                text: "📍",
+                color: "white",
+                fontSize: "18px",
+                fontWeight: "bold"
+              }}
+              zIndex={1000}
+              onClick={() => {
+                console.log('🔴 Clicked user marker at:', userLocation)
+                alert('Votre position: ' + JSON.stringify(userLocation))
+              }}
+            />
+          )}
 
           {/* Restaurant markers */}
           {restaurants.map(restaurant => (

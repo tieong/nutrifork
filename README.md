@@ -6,7 +6,7 @@ Application web pour le hackathon "Hack the Fork" permettant de trouver des rest
 
 - **Sélection d'allergies** : Choisissez vos allergies alimentaires parmi les plus courantes
 - **Géolocalisation** : Détection automatique de votre position
-- **Recherche de proximité** : Trouvez les restaurants dans un rayon de 5km via Google Places API
+- **Recherche de proximité** : Trouvez les restaurants dans un rayon de 1km via Google Places API
 - **Carte interactive** : Visualisez les restaurants autour de vous sur Google Maps avec des marqueurs
 - **Filtrage intelligent** : Affichez uniquement les plats végétariens sans vos allergènes
 - **Détails des plats** : Consultez les menus avec descriptions et allergènes au clic sur les marqueurs
@@ -96,7 +96,7 @@ nutrifork/
 - Sauvegarde des préférences utilisateur
 - Mode sombre
 - Partage de restaurants favoris
-- Ajustement du rayon de recherche (actuellement fixé à 5km)
+- Ajustement du rayon de recherche (actuellement fixé à 1km)
 
 ## 📄 Licence
 
