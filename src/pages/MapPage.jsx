@@ -27,7 +27,7 @@ const filterDishesByAllergies = (dishes, userAllergies) => {
 // ============================================
 // HEADER COMPONENT WITH DARK/LIGHT TOGGLE
 // ============================================
-function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack, isDarkMode, onToggleTheme }) {
+function MapHeader({ allergiesCount, restaurantsCount, veggieCount, isSearching, onBack, isDarkMode, onToggleTheme }) {
   return (
     <div className="absolute top-4 left-4 z-20 animate-slide-down">
       <div className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-3 flex items-center gap-3`}>
@@ -75,6 +75,19 @@ function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack, isDa
 
         {/* Stats */}
         <div className="flex items-center gap-2">
+          {/* Veggie restaurants badge - PRIORITÉ */}
+          {veggieCount > 0 && (
+            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border
+              ${isDarkMode 
+                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
+                : 'bg-emerald-100 text-emerald-700 border-emerald-200'
+              }`}
+            >
+              <span>🌱</span>
+              <span>{veggieCount} végé</span>
+            </div>
+          )}
+          
           {/* Allergies badge */}
           {allergiesCount > 0 && (
             <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border
@@ -168,22 +181,30 @@ function createUserMarker() {
 // ============================================
 function createRestaurantMarker(restaurant, index) {
   const rating = restaurant.rating || 4.0
-  const ratingClass = rating >= 4.5 ? 'rating-excellent' : rating >= 4.0 ? 'rating-high' : 'rating-medium'
+  const isVeggie = restaurant.isVeggie || false
+  
+  // Classes selon le type
+  const markerClass = isVeggie ? 'veggie-marker' : 
+    (rating >= 4.5 ? 'rating-excellent' : rating >= 4.0 ? 'rating-high' : 'rating-medium')
+  
+  // Icône selon le type
+  const icon = isVeggie ? '🌱' : '🍽️'
   
   const container = document.createElement('div')
   container.className = 'marker-container'
   container.style.animationDelay = `${index * 60}ms`
   
   container.innerHTML = `
-    <div class="restaurant-marker ${ratingClass}">
+    <div class="restaurant-marker ${markerClass}">
       <div class="restaurant-marker-glow"></div>
       <div class="restaurant-marker-inner">
-        <span class="restaurant-marker-icon">🍽️</span>
+        <span class="restaurant-marker-icon">${icon}</span>
       </div>
       <div class="restaurant-marker-rating">
         <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
         <span>${rating.toFixed(1)}</span>
       </div>
+      ${isVeggie ? '<div class="veggie-badge">VÉGÉ</div>' : ''}
     </div>
   `
   
@@ -256,6 +277,7 @@ function MapPage() {
   }, [GOOGLE_MAPS_API_KEY])
 
   // Search for nearby restaurants using Google Places API
+  // PRIORITÉ : Restos vegan/végétariens d'abord, puis les autres
   const searchNearbyRestaurants = useCallback(async (location) => {
     if (!isLoaded || !window.google) return
 
@@ -263,36 +285,65 @@ function MapPage() {
     try {
       const { Place, SearchNearbyRankPreference } = await window.google.maps.importLibrary('places')
 
-      const request = {
+      const baseRequest = {
         fields: ['displayName', 'location', 'formattedAddress', 'rating', 'types', 'businessStatus', 'primaryType'],
         locationRestriction: {
           center: location,
-          radius: 1000,
+          radius: 1500,
         },
-        includedPrimaryTypes: [
-          'restaurant',
-          'cafe',
-          'bar',
-          'bakery',
-          'meal_takeaway'
-        ],
         maxResultCount: 20,
         rankPreference: SearchNearbyRankPreference.POPULARITY,
         language: 'fr',
         region: 'fr',
       }
 
-      const { places } = await Place.searchNearby(request)
+      // 1️⃣ D'abord : chercher les restos VEGAN et VÉGÉTARIENS
+      const veggieRequest = {
+        ...baseRequest,
+        includedPrimaryTypes: [
+          'vegan_restaurant',
+          'vegetarian_restaurant'
+        ],
+      }
 
-      if (places && places.length > 0) {
-        console.log('Places found:', places.length)
+      let veggieResults = []
+      try {
+        const veggieResponse = await Place.searchNearby(veggieRequest)
+        veggieResults = veggieResponse.places || []
+        console.log('🌱 Restos végé/vegan trouvés:', veggieResults.length)
+      } catch (e) {
+        console.log('Pas de restos végé trouvés, recherche classique...')
+      }
 
+      // 2️⃣ Ensuite : chercher les autres restos pour compléter
+      const otherRequest = {
+        ...baseRequest,
+        includedPrimaryTypes: [
+          'restaurant',
+          'cafe',
+          'bakery',
+          'meal_takeaway'
+        ],
+      }
+
+      const otherResponse = await Place.searchNearby(otherRequest)
+      const otherResults = otherResponse.places || []
+      console.log('🍽️ Autres restos trouvés:', otherResults.length)
+
+      // 3️⃣ Merger : végé d'abord, puis les autres (sans doublons)
+      const veggieIds = new Set(veggieResults.map(p => p.id))
+      const allPlaces = [
+        ...veggieResults,
+        ...otherResults.filter(p => !veggieIds.has(p.id))
+      ]
+
+      if (allPlaces.length > 0) {
         const excludedTypes = ['museum', 'park', 'tourist_attraction', 'art_gallery', 'library',
                                'gym', 'spa', 'church', 'mosque', 'synagogue', 'school', 'hospital',
                                'amusement_park', 'aquarium', 'zoo', 'stadium', 'shopping_mall',
                                'store', 'clothing_store', 'book_store', 'night_club']
 
-        const transformedRestaurants = places
+        const transformedRestaurants = allPlaces
           .filter(place => {
             const placeTypes = place.types || []
             const hasExcludedType = placeTypes.some(type => excludedTypes.includes(type))
@@ -300,7 +351,13 @@ function MapPage() {
           })
           .map(place => {
             const primaryType = place.primaryType || place.types?.[0] || 'restaurant'
+            const isVeggie = primaryType === 'vegan_restaurant' || 
+                            primaryType === 'vegetarian_restaurant' ||
+                            veggieIds.has(place.id)
+            
             const typeLabels = {
+              'vegan_restaurant': '🌿 Vegan',
+              'vegetarian_restaurant': '🌱 Végétarien',
               'restaurant': 'Restaurant',
               'cafe': 'Café',
               'bar': 'Bar',
@@ -319,6 +376,8 @@ function MapPage() {
               },
               rating: place.rating || 4.0,
               type: typeLabels[primaryType] || 'Restaurant',
+              primaryType: primaryType,
+              isVeggie: isVeggie, // Flag pour identifier les restos végé
               dishes: [],
               isLoading: false,
               menuFetched: false
@@ -495,6 +554,7 @@ function MapPage() {
       <MapHeader 
         allergiesCount={userAllergies.length}
         restaurantsCount={restaurants.length}
+        veggieCount={restaurants.filter(r => r.isVeggie).length}
         isSearching={isSearching}
         onBack={handleBackToAllergies}
         isDarkMode={isDarkMode}
