@@ -26,18 +26,21 @@ const filterDishesByAllergies = (dishes, userAllergies) => {
 }
 
 // ============================================
-// PREMIUM DARK HEADER - Glassmorphism style
+// HEADER COMPONENT WITH DARK/LIGHT TOGGLE
 // ============================================
-function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack }) {
+function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack, isDarkMode, onToggleTheme }) {
   return (
     <div className="absolute top-4 left-4 z-20 animate-slide-down">
-      {/* Light solid panel */}
-      <div className="header-glass px-4 py-3 flex items-center gap-3">
+      <div className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-3 flex items-center gap-3`}>
         
         {/* Back button */}
         <button
           onClick={onBack}
-          className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-all duration-300 group"
+          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 group
+            ${isDarkMode 
+              ? 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white' 
+              : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800'
+            }`}
           title="Modifier mes allergies"
         >
           <svg 
@@ -51,31 +54,35 @@ function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack }) {
         </button>
 
         {/* Divider */}
-        <div className="w-px h-8 bg-gray-300"></div>
+        <div className={`w-px h-8 ${isDarkMode ? 'bg-white/20' : 'bg-gray-300'}`}></div>
 
         {/* Logo */}
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-md">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-md shadow-emerald-500/25">
             <span className="text-lg">🌱</span>
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-gray-900 text-base tracking-tight leading-tight">
+            <span className={`font-bold text-base tracking-tight leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               NutriFork
             </span>
-            <span className="text-[9px] text-gray-500 uppercase tracking-wider font-medium">
+            <span className={`text-[9px] uppercase tracking-wider font-medium ${isDarkMode ? 'text-white/50' : 'text-gray-500'}`}>
               Veggie Finder
             </span>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="w-px h-8 bg-gray-300"></div>
+        <div className={`w-px h-8 ${isDarkMode ? 'bg-white/20' : 'bg-gray-300'}`}></div>
 
         {/* Stats */}
         <div className="flex items-center gap-2">
           {/* Allergies badge */}
           {allergiesCount > 0 && (
-            <div className="flex items-center gap-1.5 bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full text-xs font-semibold border border-amber-300">
+            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border
+              ${isDarkMode 
+                ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' 
+                : 'bg-amber-100 text-amber-800 border-amber-300'
+              }`}>
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
@@ -84,7 +91,11 @@ function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack }) {
           )}
 
           {/* Restaurants count */}
-          <div className="flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-semibold border border-emerald-300">
+          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border
+            ${isDarkMode 
+              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
+              : 'bg-emerald-100 text-emerald-800 border-emerald-300'
+            }`}>
             {isSearching ? (
               <>
                 <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -105,8 +116,32 @@ function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack }) {
           </div>
 
           {/* Distance indicator */}
-          <span className="text-[10px] text-gray-500 font-medium">&lt;1km</span>
+          <span className={`text-[10px] font-medium ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>&lt;1km</span>
         </div>
+
+        {/* Divider */}
+        <div className={`w-px h-8 ${isDarkMode ? 'bg-white/20' : 'bg-gray-300'}`}></div>
+
+        {/* Theme Toggle */}
+        <button
+          onClick={onToggleTheme}
+          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300
+            ${isDarkMode 
+              ? 'bg-white/10 hover:bg-white/20 text-yellow-300' 
+              : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+            }`}
+          title={isDarkMode ? 'Mode clair' : 'Mode sombre'}
+        >
+          {isDarkMode ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          )}
+        </button>
       </div>
     </div>
   )
@@ -136,12 +171,10 @@ function createRestaurantMarker(restaurant, index) {
   const rating = restaurant.rating || 4.0
   const ratingClass = rating >= 4.5 ? 'rating-excellent' : rating >= 4.0 ? 'rating-high' : 'rating-medium'
   
-  // Container externe (géré par MapLibre - NE PAS transformer)
   const container = document.createElement('div')
   container.className = 'marker-container'
   container.style.animationDelay = `${index * 60}ms`
   
-  // Wrapper interne pour les animations (on peut transformer celui-ci)
   container.innerHTML = `
     <div class="restaurant-marker ${ratingClass}">
       <div class="restaurant-marker-glow"></div>
@@ -166,6 +199,10 @@ function MapPage() {
   const [isSearching, setIsSearching] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [mapLoaded, setMapLoaded] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('nutrifork-theme')
+    return saved ? saved === 'dark' : true // Dark by default
+  })
   const navigate = useNavigate()
   const mapContainerRef = useRef(null)
   const mapRef = useRef(null)
@@ -174,6 +211,26 @@ function MapPage() {
   // API Keys
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''
   const JAWG_ACCESS_TOKEN = import.meta.env.VITE_JAWG_ACCESS_TOKEN || ''
+
+  // Toggle theme
+  const handleToggleTheme = () => {
+    setIsDarkMode(prev => {
+      const newValue = !prev
+      localStorage.setItem('nutrifork-theme', newValue ? 'dark' : 'light')
+      return newValue
+    })
+  }
+
+  // Update map style when theme changes
+  useEffect(() => {
+    if (mapRef.current && mapLoaded) {
+      const style = isDarkMode 
+        ? `https://api.jawg.io/styles/jawg-dark.json?access-token=${JAWG_ACCESS_TOKEN}`
+        : `https://api.jawg.io/styles/jawg-streets.json?access-token=${JAWG_ACCESS_TOKEN}`
+      
+      mapRef.current.setStyle(style)
+    }
+  }, [isDarkMode, mapLoaded, JAWG_ACCESS_TOKEN])
 
   // Load Google Places API script
   useEffect(() => {
@@ -315,21 +372,24 @@ function MapPage() {
     }
   }, [isLoaded, userLocation, searchNearbyRestaurants])
 
-  // Initialize MapLibre with DARK theme
+  // Initialize MapLibre
   useEffect(() => {
     if (!mapContainerRef.current || !JAWG_ACCESS_TOKEN) return
 
+    const style = isDarkMode 
+      ? `https://api.jawg.io/styles/jawg-dark.json?access-token=${JAWG_ACCESS_TOKEN}`
+      : `https://api.jawg.io/styles/jawg-streets.json?access-token=${JAWG_ACCESS_TOKEN}`
+
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      // Using Jawg Streets (light) theme
-      style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${JAWG_ACCESS_TOKEN}`,
+      style: style,
       center: [userLocation.lng, userLocation.lat],
       zoom: 15,
-      pitch: 0,
+      pitch: isDarkMode ? 45 : 0,
+      bearing: isDarkMode ? -10 : 0,
       antialias: true
     })
 
-    // Custom navigation control positioning
     map.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'bottom-right')
 
     map.on('load', () => {
@@ -354,18 +414,18 @@ function MapPage() {
     }
   }, [userLocation])
 
-  // Update markers when restaurants change with staggered animations
+  // Update markers when restaurants change
   useEffect(() => {
     if (!mapRef.current || !mapLoaded) return
 
-    // Clear existing markers with fade out
+    // Clear existing markers
     markersRef.current.forEach(marker => {
       marker.getElement().style.opacity = '0'
       setTimeout(() => marker.remove(), 300)
     })
     markersRef.current = []
 
-    // Add user location marker with pulse animation
+    // Add user location marker
     const userMarkerEl = createUserMarker()
     const userMarker = new maplibregl.Marker({ 
       element: userMarkerEl,
@@ -375,14 +435,14 @@ function MapPage() {
       .addTo(mapRef.current)
     markersRef.current.push(userMarker)
 
-    // Add restaurant markers with staggered entry
+    // Add restaurant markers
     restaurants.forEach((restaurant, index) => {
       const el = createRestaurantMarker(restaurant, index)
       
       el.addEventListener('click', () => {
         setSelectedRestaurant(restaurant)
       })
-      
+
       const marker = new maplibregl.Marker({ 
         element: el,
         anchor: 'center'
@@ -401,30 +461,18 @@ function MapPage() {
   // No API keys - show setup screen
   if (!GOOGLE_MAPS_API_KEY || !JAWG_ACCESS_TOKEN) {
     return (
-      <div className="min-h-screen bg-[#0a0f1a] flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full bg-[#111827] rounded-3xl shadow-2xl shadow-black/50 p-8 text-center border border-white/5">
+      <div className={`min-h-screen flex items-center justify-center p-4 ${isDarkMode ? 'bg-[#0a0f1a]' : 'bg-gray-100'}`}>
+        <div className={`max-w-2xl w-full rounded-3xl shadow-2xl p-8 text-center border ${isDarkMode ? 'bg-[#111827] border-white/5' : 'bg-white border-gray-200'}`}>
           <div className="text-6xl mb-4">🗺️</div>
-          <h2 className="text-2xl font-bold text-white mb-4">
+          <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
             Configuration requise
           </h2>
-          <p className="text-white/60 mb-6">
+          <p className={`mb-6 ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
             Pour afficher la carte, vous devez ajouter vos clés API.
           </p>
-          <div className="bg-black/30 p-4 rounded-xl mb-6 text-left border border-white/5">
-            <p className="text-sm font-mono text-white/70 mb-2">
-              1. Créez un fichier <code className="bg-white/10 px-2 py-1 rounded text-emerald-400">.env</code>
-            </p>
-            <p className="text-sm font-mono text-white/70 mb-2">
-              2. <code className="bg-white/10 px-2 py-1 rounded text-emerald-400">VITE_GOOGLE_MAPS_API_KEY=...</code>
-            </p>
-            <p className="text-sm font-mono text-white/70 mb-2">
-              3. <code className="bg-white/10 px-2 py-1 rounded text-emerald-400">VITE_JAWG_ACCESS_TOKEN=...</code>
-            </p>
-          </div>
-
           <button
             onClick={handleBackToAllergies}
-            className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
+            className="text-emerald-500 hover:text-emerald-400 font-medium transition-colors"
           >
             ← Modifier mes allergies
           </button>
@@ -434,35 +482,39 @@ function MapPage() {
   }
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-gray-100">
-      {/* Light header */}
+    <div className={`relative w-full h-screen overflow-hidden ${isDarkMode ? 'bg-[#0a0f1a]' : 'bg-gray-100'}`}>
+      {/* Dark mode overlays */}
+      {isDarkMode && (
+        <>
+          <div className="absolute inset-0 pointer-events-none z-10 vignette-overlay"></div>
+          <div className="absolute top-0 left-0 right-0 h-32 pointer-events-none z-10 bg-gradient-to-b from-black/40 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none z-10 bg-gradient-to-t from-black/30 to-transparent"></div>
+        </>
+      )}
+
+      {/* Header with theme toggle */}
       <MapHeader 
         allergiesCount={userAllergies.length}
         restaurantsCount={restaurants.length}
         isSearching={isSearching}
         onBack={handleBackToAllergies}
+        isDarkMode={isDarkMode}
+        onToggleTheme={handleToggleTheme}
       />
-
-      {/* Search radius indicator */}
-      {isSearching && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-5 pointer-events-none">
-          <div className="search-radius-pulse"></div>
-        </div>
-      )}
 
       {/* MapLibre Map */}
       <div 
         ref={mapContainerRef} 
         className="w-full h-full"
-        style={{ background: '#f1f5f9' }}
+        style={{ background: isDarkMode ? '#0a0f1a' : '#f1f5f9' }}
       />
 
       {/* Restaurant count floating badge */}
       {!isSearching && restaurants.length > 0 && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-fade-up">
-          <div className="header-glass px-4 py-2 flex items-center gap-2">
+          <div className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-2 flex items-center gap-2`}>
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span className="text-gray-800 text-sm font-medium">
+            <span className={`text-sm font-medium ${isDarkMode ? 'text-white/80' : 'text-gray-800'}`}>
               {restaurants.length} restaurants végé à proximité
             </span>
           </div>
@@ -475,6 +527,7 @@ function MapPage() {
           restaurant={selectedRestaurant}
           onClose={() => setSelectedRestaurant(null)}
           userAllergies={userAllergies}
+          isDarkMode={isDarkMode}
         />
       )}
     </div>

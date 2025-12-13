@@ -3,8 +3,7 @@
 @tailwind utilities;
 
 /* ============================================
-   NUTRIFORK - Premium Dark Theme
-   Inspired by DataFast globe aesthetics
+   NUTRIFORK - Dual Theme Support
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -12,14 +11,7 @@
 :root {
   --color-primary: #10b981;
   --color-primary-light: #34d399;
-  --color-primary-glow: rgba(16, 185, 129, 0.4);
   --color-user: #f43f5e;
-  --color-user-glow: rgba(244, 63, 94, 0.3);
-  --color-excellent: #22c55e;
-  --color-high: #10b981;
-  --color-medium: #f59e0b;
-  --bg-light: #f8fafc;
-  --bg-card: #ffffff;
 }
 
 * {
@@ -31,7 +23,6 @@ body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--bg-light);
 }
 
 /* ============================================
@@ -39,76 +30,28 @@ body {
    ============================================ */
 
 @keyframes slide-down {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fade-up {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
+  0% { opacity: 0; transform: translate(-50%, 20px); }
+  100% { opacity: 1; transform: translate(-50%, 0); }
 }
 
 @keyframes marker-pop {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 @keyframes pulse-ring {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(4);
-    opacity: 0;
-  }
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
 }
 
 @keyframes glow-pulse {
-  0%, 100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.1);
-  }
-}
-
-@keyframes search-expand {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0.8;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(8);
-    opacity: 0;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
 }
 
 .animate-slide-down {
@@ -120,31 +63,63 @@ body {
 }
 
 /* ============================================
-   GLASSMORPHISM HEADER - Light Mode
+   HEADER - DARK MODE
+   ============================================ */
+
+.header-dark {
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+/* ============================================
+   HEADER - LIGHT MODE
+   ============================================ */
+
+.header-light {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   HEADER GLASS BASE
    ============================================ */
 
 .header-glass {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 16px;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.15),
-    0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-/* Vignette overlay removed for light mode */
+/* ============================================
+   VIGNETTE OVERLAY (Dark mode only)
+   ============================================ */
+
+.vignette-overlay {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+}
 
 /* ============================================
-   MARKER CONTAINER (géré par MapLibre)
+   MARKER CONTAINER
    ============================================ */
 
 .marker-container {
-  /* Ne PAS ajouter de transform ici - MapLibre gère le positionnement */
   animation: marker-pop 0.4s ease backwards;
 }
 
 /* ============================================
-   USER MARKER - Pulsing Location
+   USER MARKER
    ============================================ */
 
 .user-marker {
@@ -165,9 +140,9 @@ body {
   border-radius: 50%;
   border: 3px solid white;
   box-shadow: 
-    0 0 0 2px rgba(244, 63, 94, 0.2),
-    0 0 12px rgba(244, 63, 94, 0.3),
-    0 4px 12px rgba(0, 0, 0, 0.2);
+    0 0 0 2px rgba(244, 63, 94, 0.3),
+    0 0 16px rgba(244, 63, 94, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 3;
 }
 
@@ -178,13 +153,13 @@ body {
   transform: translate(-50%, -50%);
   width: 18px;
   height: 18px;
-  background: rgba(244, 63, 94, 0.3);
+  background: rgba(244, 63, 94, 0.4);
   border-radius: 50%;
   animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* ============================================
-   RESTAURANT MARKERS - Premium Glow Effect
+   RESTAURANT MARKERS
    ============================================ */
 
 .restaurant-marker {
@@ -192,7 +167,7 @@ body {
   width: 52px;
   height: 52px;
   cursor: pointer;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .restaurant-marker:hover {
@@ -208,16 +183,16 @@ body {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: var(--color-primary-glow);
-  filter: blur(10px);
-  opacity: 0.4;
+  background: rgba(16, 185, 129, 0.5);
+  filter: blur(12px);
+  opacity: 0.5;
   transition: all 0.3s ease;
   animation: glow-pulse 3s ease-in-out infinite;
 }
 
 .restaurant-marker:hover .restaurant-marker-glow {
-  opacity: 0.6;
-  filter: blur(14px);
+  opacity: 0.8;
+  filter: blur(16px);
   transform: translate(-50%, -50%) scale(1.2);
 }
 
@@ -235,15 +210,15 @@ body {
   align-items: center;
   justify-content: center;
   box-shadow: 
-    0 2px 8px rgba(16, 185, 129, 0.3),
-    0 4px 12px rgba(0, 0, 0, 0.15);
+    0 2px 12px rgba(16, 185, 129, 0.4),
+    0 4px 16px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
 .restaurant-marker:hover .restaurant-marker-inner {
   box-shadow: 
-    0 4px 16px rgba(16, 185, 129, 0.4),
-    0 8px 24px rgba(0, 0, 0, 0.2);
+    0 4px 20px rgba(16, 185, 129, 0.5),
+    0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .restaurant-marker-icon {
@@ -266,9 +241,7 @@ body {
   font-weight: 700;
   padding: 3px 6px;
   border-radius: 8px;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.3),
-    0 0 0 2px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   gap: 2px;
@@ -278,9 +251,6 @@ body {
 
 .restaurant-marker:hover .restaurant-marker-rating {
   transform: scale(1.1);
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 
 .restaurant-marker-rating svg {
@@ -289,48 +259,29 @@ body {
   color: #fbbf24;
 }
 
-/* Rating color variants - Light mode */
+/* Rating color variants */
 .restaurant-marker.rating-excellent .restaurant-marker-glow {
-  background: rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.5);
 }
 
 .restaurant-marker.rating-excellent .restaurant-marker-inner {
   background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  box-shadow: 
-    0 2px 8px rgba(34, 197, 94, 0.3),
-    0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .restaurant-marker.rating-high .restaurant-marker-glow {
-  background: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.5);
 }
 
 .restaurant-marker.rating-medium .restaurant-marker-glow {
-  background: rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.4);
 }
 
 .restaurant-marker.rating-medium .restaurant-marker-inner {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  box-shadow: 
-    0 2px 8px rgba(245, 158, 11, 0.3),
-    0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* ============================================
-   SEARCH RADIUS PULSE
-   ============================================ */
-
-.search-radius-pulse {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 2px solid rgba(16, 185, 129, 0.4);
-  background: rgba(16, 185, 129, 0.1);
-  animation: search-expand 2s ease-out infinite;
-}
-
-/* ============================================
-   MAPLIBRE OVERRIDES - Light Theme
+   MAPLIBRE OVERRIDES
    ============================================ */
 
 .maplibregl-map {
@@ -339,8 +290,8 @@ body {
 
 .maplibregl-ctrl-group {
   background: #ffffff !important;
-  border: 1px solid rgba(0, 0, 0, 0.12) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
   border-radius: 14px !important;
   overflow: hidden;
 }
@@ -367,32 +318,20 @@ body {
   border-radius: 8px 0 0 0 !important;
   padding: 4px 10px !important;
   font-size: 10px !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  border-right: none !important;
-  border-bottom: none !important;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06) !important;
 }
 
 .maplibregl-ctrl-attrib a {
-  color: rgba(0, 0, 0, 0.6) !important;
-}
-
-.maplibregl-ctrl-attrib a:hover {
-  color: rgba(0, 0, 0, 0.9) !important;
+  color: rgba(0, 0, 0, 0.7) !important;
 }
 
 .maplibregl-popup-content {
-  background: rgba(255, 255, 255, 0.98) !important;
-  backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
   border-radius: 12px !important;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15) !important;
   color: #111 !important;
   padding: 12px 16px !important;
-}
-
-.maplibregl-popup-tip {
-  border-top-color: rgba(255, 255, 255, 0.98) !important;
 }
 
 /* ============================================
@@ -405,29 +344,15 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.05);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: rgba(16, 185, 129, 0.4);
   border-radius: 4px;
-  transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(16, 185, 129, 0.6);
-}
-
-/* ============================================
-   UTILITY CLASSES
-   ============================================ */
-
-.text-shadow-glow {
-  text-shadow: 0 0 20px currentColor;
-}
-
-.backdrop-blur-xl {
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
 }
