@@ -40,7 +40,7 @@ function MapHeader({ allergiesCount, restaurantsCount, veggieCount, isSearching,
               ? 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white' 
               : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800'
             }`}
-          title="Modifier mes allergies"
+          title="Edit my allergies"
         >
           <svg 
             className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-0.5" 
@@ -84,7 +84,7 @@ function MapHeader({ allergiesCount, restaurantsCount, veggieCount, isSearching,
               }`}
             >
               <span>🌱</span>
-              <span>{veggieCount} végé</span>
+              <span>{veggieCount} veggie</span>
             </div>
           )}
           
@@ -142,7 +142,7 @@ function MapHeader({ allergiesCount, restaurantsCount, veggieCount, isSearching,
               ? 'bg-white/10 hover:bg-white/20 text-yellow-300' 
               : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
             }`}
-          title={isDarkMode ? 'Mode clair' : 'Mode sombre'}
+          title={isDarkMode ? 'Light mode' : 'Dark mode'}
         >
           {isDarkMode ? (
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -357,12 +357,12 @@ function MapPage() {
             
             const typeLabels = {
               'vegan_restaurant': '🌿 Vegan',
-              'vegetarian_restaurant': '🌱 Végétarien',
+              'vegetarian_restaurant': '🌱 Vegetarian',
               'restaurant': 'Restaurant',
               'cafe': 'Café',
               'bar': 'Bar',
-              'bakery': 'Boulangerie',
-              'meal_takeaway': 'À emporter',
+              'bakery': 'Bakery',
+              'meal_takeaway': 'Takeaway',
               'food': 'Restaurant'
             }
 
@@ -524,16 +524,16 @@ function MapPage() {
         <div className={`max-w-2xl w-full rounded-3xl shadow-2xl p-8 text-center border ${isDarkMode ? 'bg-[#111827] border-white/5' : 'bg-white border-gray-200'}`}>
           <div className="text-6xl mb-4">🗺️</div>
           <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-            Configuration requise
+            Configuration required
           </h2>
           <p className={`mb-6 ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
-            Pour afficher la carte, vous devez ajouter vos clés API.
+            To display the map, you need to add your API keys.
           </p>
           <button
             onClick={handleBackToAllergies}
             className="text-emerald-500 hover:text-emerald-400 font-medium transition-colors"
           >
-            ← Modifier mes allergies
+            ← Edit my allergies
           </button>
         </div>
       </div>
@@ -575,7 +575,7 @@ function MapPage() {
           <div className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-2 flex items-center gap-2`}>
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
             <span className={`text-sm font-medium ${isDarkMode ? 'text-white/80' : 'text-gray-800'}`}>
-              {restaurants.length} restaurants végé à proximité
+              {restaurants.length} veggie restaurants nearby
             </span>
           </div>
         </div>

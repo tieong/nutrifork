@@ -186,7 +186,7 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
                 <div className={`absolute inset-0 rounded-full blur-xl animate-pulse ${isDarkMode ? 'bg-emerald-500/20' : 'bg-emerald-100'}`}></div>
                 <div className={`relative w-16 h-16 border-4 rounded-full animate-spin ${isDarkMode ? 'border-emerald-500/30 border-t-emerald-500' : 'border-emerald-100 border-t-emerald-500'}`}></div>
               </div>
-              <p className={isDarkMode ? 'text-white/40' : 'text-gray-400'}>Chargement du menu...</p>
+              <p className={isDarkMode ? 'text-white/40' : 'text-gray-400'}>Loading menu...</p>
             </div>
           ) : error ? (
             <div className="text-center py-12">
@@ -196,7 +196,7 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
           ) : dishes.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-5xl mb-4">🍽️</div>
-              <p className={`mb-2 ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>Menu non disponible</p>
+              <p className={`mb-2 ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>Menu not available</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -259,27 +259,27 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
                       {isSafe && !dish.vegan && dish.vegetarian && (
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium
                           ${isDarkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}>
-                          🌱 Végétarien
+                          🌱 Vegetarian
                         </span>
                       )}
                       {isSafe && dish.allergens?.length === 0 && (
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium
                           ${isDarkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
-                          Sans allergènes
+                          No allergens
                         </span>
                       )}
-                      
+
                       {/* Badge pour les plats non-safe */}
                       {!isSafe && !dish.vegetarian && (
                         <span className={`text-xs px-2 py-0.5 rounded-full
                           ${isDarkMode ? 'bg-red-500/20 text-red-300' : 'bg-red-100 text-red-600'}`}>
-                          🍖 Non végé
+                          🍖 Not veggie
                         </span>
                       )}
                       {!isSafe && dish.vegetarian && (
                         <span className={`text-xs px-2 py-0.5 rounded-full
                           ${isDarkMode ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-600'}`}>
-                          ⚠️ Contient allergène
+                          ⚠️ Contains allergen
                         </span>
                       )}
                     </div>
@@ -296,7 +296,7 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
             onClick={onClose}
             className="w-full relative group overflow-hidden bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white font-semibold py-3.5 rounded-xl transition-all duration-300 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30"
           >
-            <span className="relative z-10">Fermer</span>
+            <span className="relative z-10">Close</span>
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
           </button>
         </div>

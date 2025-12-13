@@ -6,12 +6,12 @@ import ProfileModal from '../components/ProfileModal'
 const commonAllergies = [
   { id: 'gluten', name: 'Gluten', icon: '🌾' },
   { id: 'lactose', name: 'Lactose', icon: '🥛' },
-  { id: 'nuts', name: 'Fruits à coque', icon: '🥜' },
-  { id: 'eggs', name: 'Œufs', icon: '🥚' },
-  { id: 'fish', name: 'Poisson', icon: '🐟' },
-  { id: 'shellfish', name: 'Fruits de mer', icon: '🦐' },
-  { id: 'soy', name: 'Soja', icon: '🫘' },
-  { id: 'sesame', name: 'Sésame', icon: '🌰' },
+  { id: 'nuts', name: 'Nuts', icon: '🥜' },
+  { id: 'eggs', name: 'Eggs', icon: '🥚' },
+  { id: 'fish', name: 'Fish', icon: '🐟' },
+  { id: 'shellfish', name: 'Shellfish', icon: '🦐' },
+  { id: 'soy', name: 'Soy', icon: '🫘' },
+  { id: 'sesame', name: 'Sesame', icon: '🌰' },
 ]
 
 function AllergiesPage({ user, setUser }) {
@@ -88,7 +88,7 @@ function AllergiesPage({ user, setUser }) {
                 {(profile?.name || user?.email)?.charAt(0).toUpperCase() || 'U'}
               </div>
               <span className="text-sm text-gray-600 group-hover:text-gray-800 hidden sm:inline">
-                {profile?.name || 'Mon profil'}
+                {profile?.name || 'My profile'}
               </span>
             </>
           ) : (
@@ -99,7 +99,7 @@ function AllergiesPage({ user, setUser }) {
                 </svg>
               </div>
               <span className="text-sm text-gray-500 group-hover:text-gray-700 hidden sm:inline">
-                Connexion
+                Login
               </span>
             </>
           )}
@@ -113,7 +113,7 @@ function AllergiesPage({ user, setUser }) {
             NutriFork
           </h1>
           <p className="text-gray-500">
-            Trouvez des plats végé adaptés à vos allergies
+            Find veggie dishes adapted to your allergies
           </p>
         </div>
 
@@ -141,11 +141,11 @@ function AllergiesPage({ user, setUser }) {
             onClick={handleContinue}
             className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg shadow-emerald-500/30 transition-all hover:scale-105"
           >
-            Trouver des restaurants
+            Find restaurants
           </button>
           {selectedAllergies.length > 0 && (
             <p className="mt-4 text-sm text-gray-500">
-              {selectedAllergies.length} allergie(s) sélectionnée(s)
+              {selectedAllergies.length} allerg{selectedAllergies.length > 1 ? 'ies' : 'y'} selected
             </p>
           )}
         </div>

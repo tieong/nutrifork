@@ -4,12 +4,12 @@ import { supabase } from '../lib/supabase'
 const commonAllergies = [
   { id: 'gluten', name: 'Gluten', icon: '🌾' },
   { id: 'lactose', name: 'Lactose', icon: '🥛' },
-  { id: 'nuts', name: 'Fruits à coque', icon: '🥜' },
-  { id: 'eggs', name: 'Œufs', icon: '🥚' },
-  { id: 'fish', name: 'Poisson', icon: '🐟' },
-  { id: 'shellfish', name: 'Fruits de mer', icon: '🦐' },
-  { id: 'soy', name: 'Soja', icon: '🫘' },
-  { id: 'sesame', name: 'Sésame', icon: '🌰' },
+  { id: 'nuts', name: 'Nuts', icon: '🥜' },
+  { id: 'eggs', name: 'Eggs', icon: '🥚' },
+  { id: 'fish', name: 'Fish', icon: '🐟' },
+  { id: 'shellfish', name: 'Shellfish', icon: '🦐' },
+  { id: 'soy', name: 'Soy', icon: '🫘' },
+  { id: 'sesame', name: 'Sesame', icon: '🌰' },
 ]
 
 function ProfileModal({ isOpen, onClose, user, setUser }) {
@@ -212,7 +212,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
-                Connexion
+                Login
               </button>
               <button
                 onClick={() => { setActiveTab('signup'); setError(null); }}
@@ -222,7 +222,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                     : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
-                Créer un compte
+                Sign up
               </button>
             </div>
 
@@ -235,13 +235,13 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                       type="email"
                       value={formData.email}
                       onChange={e => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="vous@email.com"
+                      placeholder="you@email.com"
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                     <input
                       type="password"
                       value={formData.password}
@@ -262,7 +262,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                     )}
-                    Se connecter
+                    Sign in
                   </button>
                   
                   <div className="relative my-6">
@@ -270,7 +270,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                       <div className="w-full border-t border-gray-200"></div>
                     </div>
                     <div className="relative flex justify-center text-xs">
-                      <span className="px-2 bg-white text-gray-400">ou continuer avec</span>
+                      <span className="px-2 bg-white text-gray-400">or continue with</span>
                     </div>
                   </div>
 
@@ -305,12 +305,12 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
               ) : (
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">First name</label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={e => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Marie"
+                      placeholder="Mary"
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
                     />
@@ -321,13 +321,13 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                       type="email"
                       value={formData.email}
                       onChange={e => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="vous@email.com"
+                      placeholder="you@email.com"
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                     <input
                       type="password"
                       value={formData.password}
@@ -349,12 +349,12 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                     )}
-                    Créer mon compte
+                    Create account
                   </button>
-                  
+
                   <p className="text-xs text-center text-gray-400">
-                    En créant un compte, vous acceptez nos{' '}
-                    <a href="#" className="text-emerald-600 hover:underline">conditions d'utilisation</a>
+                    By creating an account, you agree to our{' '}
+                    <a href="#" className="text-emerald-600 hover:underline">terms of use</a>
                   </p>
                 </form>
               )}
@@ -370,10 +370,10 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              Retour
+              Back
             </button>
-            
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Mes allergies</h3>
+
+            <h3 className="text-lg font-bold text-gray-800 mb-4">My allergies</h3>
             
             <div className="grid grid-cols-2 gap-3 mb-6">
               {commonAllergies.map(allergy => (
@@ -397,7 +397,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
               disabled={loading}
               className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-semibold py-3 rounded-xl transition-all"
             >
-              {loading ? 'Enregistrement...' : 'Enregistrer'}
+              {loading ? 'Saving...' : 'Save'}
             </button>
           </div>
         ) : (
@@ -408,7 +408,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                 {(profile?.name || user?.email)?.charAt(0).toUpperCase() || '?'}
               </div>
               <h2 className="text-xl font-bold text-gray-800">
-                {profile?.name || user?.user_metadata?.name || 'Utilisateur'}
+                {profile?.name || user?.user_metadata?.name || 'User'}
               </h2>
               <p className="text-sm text-gray-500">{user?.email}</p>
             </div>
@@ -421,7 +421,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
               </div>
               <div className="bg-emerald-50 rounded-xl p-4 text-center">
                 <div className="text-2xl font-bold text-emerald-600">{profile?.favorites?.length || 0}</div>
-                <div className="text-xs text-emerald-700">Favoris</div>
+                <div className="text-xs text-emerald-700">Favorites</div>
               </div>
             </div>
 
@@ -435,7 +435,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                   <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
                     <span>⚠️</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-700">Mes allergies</span>
+                  <span className="text-sm font-medium text-gray-700">My allergies</span>
                 </div>
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -446,7 +446,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                   <div className="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center">
                     <span>❤️</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-700">Restaurants favoris</span>
+                  <span className="text-sm font-medium text-gray-700">Favorite restaurants</span>
                 </div>
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -458,7 +458,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
               onClick={handleLogout}
               className="w-full py-3 text-sm text-red-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
             >
-              Se déconnecter
+              Sign out
             </button>
           </div>
         )}
