@@ -32,6 +32,22 @@ export const mockRestaurants = [
         vegetarian: true,
         description: "Tomates, concombre, olives, huile d'olive"
       },
+      {
+        id: 104,
+        name: "Tartare de bœuf",
+        price: 16.50,
+        allergens: ['eggs'],
+        vegetarian: false,
+        description: "Bœuf haché assaisonné, câpres, cornichons, jaune d'œuf"
+      },
+      {
+        id: 105,
+        name: "Poulet rôti aux herbes",
+        price: 15.00,
+        allergens: [],
+        vegetarian: false,
+        description: "Poulet fermier, herbes de Provence, pommes de terre grenaille"
+      },
     ]
   },
   {
@@ -65,6 +81,22 @@ export const mockRestaurants = [
         allergens: ['gluten', 'eggs'],
         vegetarian: true,
         description: "Pâte feuilletée, courgettes, aubergines, tomates"
+      },
+      {
+        id: 204,
+        name: "Saumon grillé sauce teriyaki",
+        price: 17.50,
+        allergens: ['fish', 'soy', 'gluten'],
+        vegetarian: false,
+        description: "Pavé de saumon, légumes vapeur, sauce teriyaki maison"
+      },
+      {
+        id: 205,
+        name: "Burger du chef",
+        price: 14.50,
+        allergens: ['gluten', 'lactose'],
+        vegetarian: false,
+        description: "Steak de bœuf, cheddar, bacon, sauce barbecue"
       },
     ]
   },
@@ -100,6 +132,14 @@ export const mockRestaurants = [
         vegetarian: true,
         description: "Lentilles corail, légumes, épices douces"
       },
+      {
+        id: 304,
+        name: "Poke bowl au thon",
+        price: 15.50,
+        allergens: ['fish', 'soy', 'sesame'],
+        vegetarian: false,
+        description: "Thon cru mariné, riz vinaigré, avocat, edamame"
+      },
     ]
   },
   {
@@ -133,6 +173,22 @@ export const mockRestaurants = [
         allergens: ['lactose'],
         vegetarian: true,
         description: "Pommes de terre, courgettes, crème fraîche, fromage"
+      },
+      {
+        id: 404,
+        name: "Entrecôte grillée",
+        price: 19.50,
+        allergens: [],
+        vegetarian: false,
+        description: "Entrecôte de bœuf 300g, frites maison, sauce au poivre"
+      },
+      {
+        id: 405,
+        name: "Magret de canard aux figues",
+        price: 18.00,
+        allergens: [],
+        vegetarian: false,
+        description: "Magret rôti, compotée de figues, légumes de saison"
       },
     ]
   },
@@ -168,6 +224,22 @@ export const mockRestaurants = [
         vegetarian: true,
         description: "Galette de sarrasin, œuf, fromage, champignons"
       },
+      {
+        id: 504,
+        name: "Couscous royal",
+        price: 16.50,
+        allergens: ['gluten'],
+        vegetarian: false,
+        description: "Semoule, merguez, poulet, agneau, légumes, pois chiches"
+      },
+      {
+        id: 505,
+        name: "Plateau de fruits de mer",
+        price: 24.00,
+        allergens: ['shellfish'],
+        vegetarian: false,
+        description: "Huîtres, crevettes, bulots, mayonnaise maison"
+      },
     ]
   }
 ]
@@ -175,13 +247,10 @@ export const mockRestaurants = [
 // Helper function to filter dishes based on user allergies
 export const filterDishesByAllergies = (dishes, userAllergies) => {
   if (!userAllergies || userAllergies.length === 0) {
-    return dishes.filter(dish => dish.vegetarian)
+    return dishes
   }
 
   return dishes.filter(dish => {
-    // Only show vegetarian dishes
-    if (!dish.vegetarian) return false
-
     // Check if dish contains any of the user's allergies
     const hasAllergen = dish.allergens.some(allergen =>
       userAllergies.includes(allergen)

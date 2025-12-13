@@ -4,11 +4,10 @@ function RestaurantModal({ restaurant, onClose, userAllergies }) {
   // Filter dishes based on user allergies
   const filterDishesByAllergies = (dishes, allergies) => {
     if (!allergies || allergies.length === 0) {
-      return dishes.filter(dish => dish.vegetarian)
+      return dishes
     }
 
     return dishes.filter(dish => {
-      if (!dish.vegetarian) return false
       const hasAllergen = dish.allergens.some(allergen =>
         allergies.includes(allergen)
       )
@@ -49,11 +48,11 @@ function RestaurantModal({ restaurant, onClose, userAllergies }) {
         <div className="p-6">
           <div className="mb-4">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              🥗 Plats végétariens disponibles
+              🍽️ Menu disponible
             </h3>
             {userAllergies && userAllergies.length > 0 && (
               <p className="text-sm text-gray-600">
-                Filtrés selon vos allergies
+                Filtré selon vos allergies
               </p>
             )}
           </div>
@@ -76,9 +75,11 @@ function RestaurantModal({ restaurant, onClose, userAllergies }) {
                   </div>
                   <p className="text-gray-600 text-sm mb-2">{dish.description}</p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                      🌱 Végétarien
-                    </span>
+                    {dish.vegetarian && (
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                        🌱 Végétarien
+                      </span>
+                    )}
                     {dish.allergens.length === 0 ? (
                       <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
                         ✓ Sans allergènes

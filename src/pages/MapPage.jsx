@@ -28,6 +28,87 @@ const filterDishesByAllergies = (dishes, userAllergies) => {
   })
 }
 
+// ============================================
+// NEW HEADER COMPONENT - Glassmorphism style
+// ============================================
+function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack }) {
+  return (
+    <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
+      {/* Left panel - Logo & Stats */}
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg shadow-black/10 border border-white/50 px-5 py-3 flex items-center gap-4">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+            <span className="text-white text-xl">🌱</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-gray-800 text-lg tracking-tight leading-tight">
+              NutriFork
+            </span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-wider">
+              Veggie Finder
+            </span>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="w-px h-10 bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
+
+        {/* Stats */}
+        <div className="flex items-center gap-2">
+          {/* Allergies badge */}
+          {allergiesCount > 0 && (
+            <div className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full text-sm font-medium border border-amber-200/50">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>{allergiesCount} filtre{allergiesCount > 1 ? 's' : ''}</span>
+            </div>
+          )}
+
+          {/* Restaurants count */}
+          <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-sm font-medium border border-emerald-200/50">
+            {isSearching ? (
+              <>
+                <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Recherche...</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>{restaurantsCount} resto{restaurantsCount > 1 ? 's' : ''}</span>
+                <span className="text-emerald-500/70 text-xs font-normal">• &lt;1km</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel - Back button */}
+      <button
+        onClick={onBack}
+        className="bg-white/90 backdrop-blur-xl rounded-xl shadow-lg shadow-black/10 border border-white/50 px-4 py-2.5 flex items-center gap-2 text-gray-600 hover:text-gray-900 hover:bg-white transition-all duration-200 group"
+      >
+        <svg 
+          className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        <span className="text-sm font-medium">Retour</span>
+      </button>
+    </div>
+  )
+}
+
 function MapPage() {
   const [selectedRestaurant, setSelectedRestaurant] = useState(null)
   const [userAllergies, setUserAllergies] = useState([])
@@ -422,36 +503,13 @@ function MapPage() {
 
   return (
     <div className="relative">
-      {/* Header overlay */}
-      <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center">
-        <div className="bg-white rounded-lg shadow-lg p-4 flex-1 mr-4">
-          <h1 className="text-xl font-bold text-gray-800">🍴 NutriFork</h1>
-          <p className="text-sm text-gray-600">
-            {userAllergies.length > 0
-              ? `${userAllergies.length} allergie(s) sélectionnée(s)`
-              : 'Aucune allergie sélectionnée'}
-          </p>
-          <p className="text-sm text-emerald-600 font-medium mt-1">
-            {isSearching ? (
-              <span className="flex items-center">
-                <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Recherche en cours...
-              </span>
-            ) : (
-              `${restaurants.length} restaurant(s) trouvé(s) à moins de 1km`
-            )}
-          </p>
-        </div>
-        <button
-          onClick={handleBackToAllergies}
-          className="bg-white hover:bg-gray-50 text-gray-800 font-medium py-3 px-4 rounded-lg shadow-lg transition-colors"
-        >
-          ← Retour
-        </button>
-      </div>
+      {/* ✨ NEW REDESIGNED HEADER */}
+      <MapHeader 
+        allergiesCount={userAllergies.length}
+        restaurantsCount={restaurants.length}
+        isSearching={isSearching}
+        onBack={handleBackToAllergies}
+      />
 
       {/* MapLibre Map with Jawg tiles */}
       {JAWG_ACCESS_TOKEN && (
