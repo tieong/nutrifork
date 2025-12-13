@@ -13,14 +13,17 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
       setDishes(restaurant.dishes)
       return
     }
-
+    
     const loadMenu = async () => {
       setIsLoading(true)
       setError(null)
       try {
         const menuData = await fetchRestaurantMenu(restaurant.name, restaurant.address)
-        if (menuData && menuData.dishes) {
-          setDishes(menuData.dishes)
+	if (menuData && Array.isArray(menuData) && menuData.length > 0) {
+          setDishes(menuData)
+        } else if (menuData && Array.isArray(menuData)) {
+          // Empty array - no dishes found
+          setDishes([])
         }
       } catch (err) {
         console.error('Error fetching menu:', err)
