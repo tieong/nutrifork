@@ -106,8 +106,8 @@ function AllergiesPage({ user, setUser }) {
         </button>
 
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/30">
-            <span className="text-3xl">🌱</span>
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <img src="/mascott.webp" alt="NutriFork Mascot" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
             NutriFork

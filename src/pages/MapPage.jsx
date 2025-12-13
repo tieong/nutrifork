@@ -58,8 +58,8 @@ function MapHeader({ allergiesCount, restaurantsCount, isSearching, onBack }) {
 
         {/* Logo */}
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-md shadow-emerald-500/25">
-            <span className="text-white text-lg">🌱</span>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center">
+            <img src="/mascott.webp" alt="NutriFork" className="w-full h-full object-contain" />
           </div>
           <div className="flex flex-col">
             <span className="font-bold text-gray-800 text-base tracking-tight leading-tight">
