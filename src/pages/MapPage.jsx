@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import RestaurantModal from '../components/RestaurantModal'
+import { fetchRestaurantMenu } from '../services/perplexityService'
 
 const defaultCenter = {
   lat: 48.8566,
@@ -11,31 +12,6 @@ const defaultCenter = {
 
 // Libraries to load for Google Places API
 const libraries = ['places']
-
-// Helper function to generate mock dishes for a restaurant
-const generateMockDishes = (restaurantName) => {
-  const dishTemplates = [
-    { name: 'Salade verte', price: 9.50, allergens: [], description: 'Salade fraîche de saison' },
-    { name: 'Buddha Bowl', price: 12.50, allergens: ['sesame'], description: 'Quinoa, légumes, sauce tahini' },
-    { name: 'Risotto aux champignons', price: 14.00, allergens: ['lactose'], description: 'Riz arborio, champignons, parmesan' },
-    { name: 'Wrap végétarien', price: 10.00, allergens: ['gluten'], description: 'Tortilla, légumes grillés, houmous' },
-    { name: 'Curry de légumes', price: 13.00, allergens: [], description: 'Légumes de saison, lait de coco, riz' },
-    { name: 'Poke bowl', price: 13.50, allergens: ['soy', 'sesame'], description: 'Riz, tofu, avocat, edamame' },
-    { name: 'Tarte aux légumes', price: 11.50, allergens: ['gluten', 'eggs'], description: 'Pâte feuilletée, légumes du soleil' },
-    { name: 'Soupe de lentilles', price: 8.00, allergens: [], description: 'Lentilles corail, épices douces' },
-  ]
-
-  // Select 3-5 random dishes
-  const numberOfDishes = 3 + Math.floor(Math.random() * 3)
-  const shuffled = [...dishTemplates].sort(() => 0.5 - Math.random())
-  const selectedDishes = shuffled.slice(0, numberOfDishes)
-
-  return selectedDishes.map((dish, index) => ({
-    id: `${restaurantName}-${index}`,
-    ...dish,
-    vegetarian: true
-  }))
-}
 
 // Helper function to filter dishes based on user allergies
 const filterDishesByAllergies = (dishes, userAllergies) => {
@@ -133,7 +109,7 @@ function MapPage() {
                                'amusement_park', 'aquarium', 'zoo', 'stadium', 'shopping_mall',
                                'store', 'clothing_store', 'book_store', 'night_club']
 
-        // Transform places to match our restaurant structure
+        // Transform places to match our restaurant structure (without dishes initially)
         const transformedRestaurants = places
           .filter(place => {
             // Log for debugging
@@ -173,11 +149,53 @@ function MapPage() {
               address: place.formattedAddress || 'Adresse non disponible',
               type: typeDisplay,
               rating: place.rating || 4.0,
-              dishes: generateMockDishes(place.displayName || `Restaurant ${index}`)
+              dishes: [], // Will be fetched from Perplexity
+              isLoadingMenu: true // Flag to show loading state
             }
           })
 
         setRestaurants(transformedRestaurants)
+
+        // Fetch menus from Perplexity for each restaurant
+        console.log('🔍 Fetching menus from Perplexity for', transformedRestaurants.length, 'restaurants...')
+
+        // Fetch menus sequentially with delay to avoid rate limiting
+        for (let i = 0; i < transformedRestaurants.length; i++) {
+          const restaurant = transformedRestaurants[i]
+
+          try {
+            console.log(`Fetching menu for ${restaurant.name}...`)
+            const dishes = await fetchRestaurantMenu(restaurant.name, restaurant.address)
+
+            // Update the specific restaurant with fetched dishes
+            setRestaurants(prevRestaurants =>
+              prevRestaurants.map(r =>
+                r.id === restaurant.id
+                  ? { ...r, dishes, isLoadingMenu: false }
+                  : r
+              )
+            )
+
+            console.log(`✅ Menu fetched for ${restaurant.name}: ${dishes.length} dishes`)
+
+            // Add delay between requests to respect rate limits (1 second)
+            if (i < transformedRestaurants.length - 1) {
+              await new Promise(resolve => setTimeout(resolve, 1000))
+            }
+          } catch (error) {
+            console.error(`Failed to fetch menu for ${restaurant.name}:`, error)
+            // Mark as finished loading even on error (fallback dishes will be used)
+            setRestaurants(prevRestaurants =>
+              prevRestaurants.map(r =>
+                r.id === restaurant.id
+                  ? { ...r, isLoadingMenu: false }
+                  : r
+              )
+            )
+          }
+        }
+
+        console.log('✅ All menus fetched!')
       } else {
         console.log('No restaurants found nearby')
         setRestaurants([])

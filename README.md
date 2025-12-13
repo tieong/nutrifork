@@ -8,8 +8,9 @@ Application web pour le hackathon "Hack the Fork" permettant de trouver des rest
 - **Géolocalisation** : Détection automatique de votre position
 - **Recherche de proximité** : Trouvez les restaurants dans un rayon de 1km via Google Places API
 - **Carte interactive** : Visualisez les restaurants autour de vous sur une carte MapLibre avec tuiles Jawg
+- **Menus réels** : Récupération automatique des menus des restaurants via Perplexity AI
 - **Filtrage intelligent** : Affichez uniquement les plats végétariens sans vos allergènes
-- **Détails des plats** : Consultez les menus avec descriptions et allergènes au clic sur les marqueurs
+- **Détails des plats** : Consultez les menus avec descriptions, prix et allergènes au clic sur les marqueurs
 
 ## 🚀 Installation
 
@@ -24,6 +25,7 @@ npm install
    - Copiez le fichier `.env.example` en `.env`
    - **Google Maps API** (pour la recherche de restaurants) : Obtenez une clé sur [Google Maps Platform](https://developers.google.com/maps/documentation/javascript/get-api-key)
    - **Jawg Maps** (pour les tuiles de carte) : Créez un compte gratuit sur [Jawg.io](https://www.jawg.io/) et obtenez un token d'accès
+   - **Perplexity API** (pour récupérer les menus réels) : Obtenez une clé sur [Perplexity AI](https://www.perplexity.ai/settings/api)
    - Remplacez les valeurs dans le fichier `.env`
 
 ```bash
@@ -31,6 +33,7 @@ cp .env.example .env
 # Éditez .env et ajoutez vos clés API :
 # VITE_GOOGLE_MAPS_API_KEY=votre_clé_google
 # VITE_JAWG_ACCESS_TOKEN=votre_token_jawg
+# VITE_PERPLEXITY_API_KEY=votre_clé_perplexity
 ```
 
 4. Lancez l'application :
@@ -55,11 +58,14 @@ npm run dev
 - **MapLibre GL JS** - Cartographie open-source
 - **Jawg Maps** - Tuiles de carte vectorielles
 - **Google Places API** - Recherche de restaurants
+- **Perplexity AI** - Récupération intelligente des menus réels
 - **Tailwind CSS** - Styling
 
 ## 📝 Mode démo
 
 Si vous n'avez pas de clés API (Google Maps ou Jawg), l'application fonctionne en mode démo avec une liste de restaurants cliquables.
+
+**Note sur Perplexity** : Si vous n'avez pas de clé Perplexity API, l'application utilisera des plats génériques comme fallback. Pour obtenir des menus réels, ajoutez votre clé API Perplexity dans le fichier `.env`.
 
 ## 🗺️ Structure du projet
 
@@ -73,6 +79,8 @@ nutrifork/
 │   ├── pages/
 │   │   ├── AllergiesPage.jsx      # Page de sélection d'allergies
 │   │   └── MapPage.jsx            # Page avec carte
+│   ├── services/
+│   │   └── perplexityService.js   # Service Perplexity AI pour menus
 │   ├── App.jsx                     # Routing principal
 │   ├── main.jsx                    # Point d'entrée
 │   └── index.css                   # Styles Tailwind
@@ -94,13 +102,14 @@ nutrifork/
 
 ## 🔮 Améliorations futures
 
-- Intégration avec des APIs de menus réels (actuellement les plats sont générés aléatoirement)
+- ✅ ~~Intégration avec des APIs de menus réels~~ (Implémenté avec Perplexity AI!)
 - Recherche par adresse personnalisée
 - Filtres supplémentaires (prix, distance personnalisée, note minimale)
 - Sauvegarde des préférences utilisateur
 - Mode sombre
 - Partage de restaurants favoris
 - Ajustement du rayon de recherche (actuellement fixé à 1km)
+- Cache des menus pour éviter de refaire les mêmes requêtes Perplexity
 
 ## 📄 Licence
 
