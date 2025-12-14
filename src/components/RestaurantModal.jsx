@@ -9,6 +9,7 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
   const [dishes, setDishes] = useState(restaurant?.dishes || [])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [showAlternatives, setShowAlternatives] = useState(false)
 
   useEffect(() => {
     if (!restaurant) return
@@ -102,6 +103,66 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
     co2Saved = avgMeatCO2 - avgRestaurantCO2
   }
 
+  // Déterminer si on doit afficher le bouton swap
+  // Critères : score végé < 60 OU moins de 30% de plats végé
+  const shouldShowSwap = veggieScore < 60 || (dishes.length > 0 && (veggieCount / dishes.length) < 0.3)
+
+  // Suggestions de plats plant-based que le restaurant pourrait ajouter
+  const suggestedDishes = [
+    {
+      name: 'Buddha Bowl',
+      type: 'vegan',
+      description: 'Quinoa, légumes rôtis, avocat, houmous',
+      icon: '🥗',
+      category: 'Plat principal'
+    },
+    {
+      name: 'Burger Végétal',
+      type: 'vegan',
+      description: 'Steak de lentilles, légumes frais, sauce maison',
+      icon: '🍔',
+      category: 'Plat principal'
+    },
+    {
+      name: 'Curry de Légumes',
+      type: 'vegan',
+      description: 'Lait de coco, légumes de saison, riz basmati',
+      icon: '🍛',
+      category: 'Plat principal'
+    },
+    {
+      name: 'Poke Bowl Tofu',
+      type: 'vegan',
+      description: 'Tofu mariné, edamame, avocat, riz vinaigré',
+      icon: '🥙',
+      category: 'Plat principal'
+    },
+    {
+      name: 'Pad Thaï Végé',
+      type: 'vegetarian',
+      description: 'Nouilles de riz, légumes sautés, cacahuètes',
+      icon: '🍜',
+      category: 'Plat principal'
+    }
+  ]
+
+  // Calculer le nouveau score si le restaurant ajoutait ces plats
+  const calculateNewScore = (numDishesToAdd) => {
+    if (dishes.length === 0) return 0
+    const newVeggieCount = veggieCount + numDishesToAdd
+    const newTotal = dishes.length + numDishesToAdd
+    return Math.round((newVeggieCount / newTotal) * 100)
+  }
+
+  // Sélectionner 3 plats suggérés aléatoirement
+  const selectedSuggestions = shouldShowSwap
+    ? suggestedDishes.sort(() => Math.random() - 0.5).slice(0, 3)
+    : []
+
+  const potentialNewScore = selectedSuggestions.length > 0
+    ? calculateNewScore(selectedSuggestions.length)
+    : veggieScore
+
   return (
     <>
       <style>{`
@@ -119,7 +180,17 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        
+
+        @keyframes alternativeSlideIn {
+          from { opacity: 0; transform: translateX(-20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes swapButtonPulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+
         @media (max-width: 768px) {
           .restaurant-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -222,6 +293,79 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
                           -{co2Saved.toFixed(1)} kg CO2 par repas vs viande
                         </div>
                       </div>
+                    </div>
+                  )}
+
+                  {/* Swap Button - Suggestions pour améliorer le menu */}
+                  {shouldShowSwap && selectedSuggestions.length > 0 && (
+                    <button
+                      onClick={() => setShowAlternatives(!showAlternatives)}
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                        isDarkMode
+                          ? 'bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/40 text-orange-400'
+                          : 'bg-orange-50 hover:bg-orange-100 border border-orange-300 text-orange-700'
+                      }`}
+                      style={{ animation: 'swapButtonPulse 2s ease-in-out infinite' }}
+                    >
+                      <span className="text-lg">💡</span>
+                      <div className="flex-1 text-left">
+                        <div className="font-bold">Peu d'options végé ?</div>
+                        <div className={`text-xs ${isDarkMode ? 'text-orange-300/80' : 'text-orange-600'}`}>
+                          Avec {selectedSuggestions.length} plats plant-based : {veggieScore}→{potentialNewScore}/100
+                        </div>
+                      </div>
+                      <svg
+                        className={`w-5 h-5 transition-transform ${showAlternatives ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  )}
+
+                  {/* Suggestions de plats Display */}
+                  {shouldShowSwap && showAlternatives && selectedSuggestions.length > 0 && (
+                    <div className="space-y-2">
+                      <div className={`text-xs px-3 py-2 rounded-lg ${
+                        isDarkMode ? 'bg-green-500/10 text-green-400' : 'bg-green-50 text-green-700'
+                      }`}>
+                        <span className="font-bold">💚 Suggestions pour {restaurant.name}</span>
+                        <div className={`mt-1 ${isDarkMode ? 'text-green-300/80' : 'text-green-600'}`}>
+                          En ajoutant ces plats, le score passerait de {veggieScore}/100 à {potentialNewScore}/100
+                        </div>
+                      </div>
+                      {selectedSuggestions.map((suggestion, index) => (
+                        <div
+                          key={index}
+                          className={`w-full flex items-start gap-3 px-4 py-3 rounded-xl border ${
+                            isDarkMode
+                              ? 'bg-gray-800/50 border-gray-700'
+                              : 'bg-gray-50 border-gray-200'
+                          }`}
+                          style={{
+                            animation: `alternativeSlideIn 0.3s ease ${index * 0.1}s backwards`
+                          }}
+                        >
+                          <span className="text-2xl">{suggestion.icon}</span>
+                          <div className="flex-1">
+                            <div className={`font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                              {suggestion.name}
+                            </div>
+                            <div className={`text-xs mt-0.5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {suggestion.description}
+                            </div>
+                          </div>
+                          <div className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                            suggestion.type === 'vegan'
+                              ? (isDarkMode ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-600')
+                              : (isDarkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-600')
+                          }`}>
+                            {suggestion.type === 'vegan' ? '🌱 Vegan' : '🥬 Végé'}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
