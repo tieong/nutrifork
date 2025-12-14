@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import RestaurantModal from '../components/RestaurantModal'
+import SettingsModal from '../components/SettingsModal'
+import ProfileModal from '../components/ProfileModal'
 
 const defaultCenter = {
   lat: 48.8566,
@@ -25,32 +27,66 @@ const filterDishesByAllergies = (dishes, userAllergies) => {
 }
 
 // ============================================
-// HEADER COMPONENT WITH DARK/LIGHT TOGGLE
+// HEADER COMPONENT WITH USER ACTIONS
 // ============================================
-function MapHeader({ allergiesCount, restaurantsCount, veggieCount, isSearching, onBack, isDarkMode, onToggleTheme }) {
+function MapHeader({ 
+  allergiesCount, 
+  restaurantsCount, 
+  veggieCount, 
+  isSearching, 
+  onBack, 
+  isDarkMode, 
+  onToggleTheme,
+  user,
+  onSettings,
+  onSignup
+}) {
   return (
-    <div className="absolute top-4 left-4 z-20 animate-slide-down">
+    <div className="absolute top-4 left-4 right-4 z-20 animate-slide-down flex justify-between items-start">
+      {/* Left side - Logo & Stats */}
       <div className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-3 flex items-center gap-3`}>
         
-        {/* Back button */}
-        <button
-          onClick={onBack}
-          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 group
-            ${isDarkMode 
-              ? 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white' 
-              : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800'
-            }`}
-          title="Edit my allergies"
-        >
-          <svg 
-            className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-0.5" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
+        {/* Back/Settings button */}
+        {user ? (
+          <button
+            onClick={onSettings}
+            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 group
+              ${isDarkMode 
+                ? 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white' 
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800'
+              }`}
+            title="Settings"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
+            <svg 
+              className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
+        ) : (
+          <button
+            onClick={onBack}
+            className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 group
+              ${isDarkMode 
+                ? 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white' 
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800'
+              }`}
+            title="Edit allergies"
+          >
+            <svg 
+              className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-0.5" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
 
         {/* Divider */}
         <div className={`w-px h-8 ${isDarkMode ? 'bg-white/20' : 'bg-gray-300'}`}></div>
@@ -75,7 +111,7 @@ function MapHeader({ allergiesCount, restaurantsCount, veggieCount, isSearching,
 
         {/* Stats */}
         <div className="flex items-center gap-2">
-          {/* Veggie restaurants badge - PRIORITÉ */}
+          {/* Veggie restaurants badge */}
           {veggieCount > 0 && (
             <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border
               ${isDarkMode 
@@ -155,6 +191,28 @@ function MapHeader({ allergiesCount, restaurantsCount, veggieCount, isSearching,
           )}
         </button>
       </div>
+
+      {/* Right side - Signup button (only for non-logged users) */}
+      {!user && (
+        <button
+          onClick={onSignup}
+          className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-2.5 flex items-center gap-2 transition-all duration-300 hover:scale-105`}
+        >
+          <div className={`w-7 h-7 rounded-lg flex items-center justify-center
+            ${isDarkMode 
+              ? 'bg-gradient-to-br from-emerald-400 to-green-600' 
+              : 'bg-gradient-to-br from-emerald-500 to-green-600'
+            }`}
+          >
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+          </div>
+          <span className={`text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+            Create account
+          </span>
+        </button>
+      )}
     </div>
   )
 }
@@ -204,14 +262,14 @@ function createRestaurantMarker(restaurant, index) {
         <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
         <span>${rating.toFixed(1)}</span>
       </div>
-      ${isVeggie ? '<div class="veggie-badge">VÉGÉ</div>' : ''}
+      ${isVeggie ? '<div class="veggie-badge">VEGAN</div>' : ''}
     </div>
   `
   
   return container
 }
 
-function MapPage() {
+function MapPage({ user, setUser }) {
   const [selectedRestaurant, setSelectedRestaurant] = useState(null)
   const [userAllergies, setUserAllergies] = useState([])
   const [userLocation, setUserLocation] = useState(defaultCenter)
@@ -221,8 +279,12 @@ function MapPage() {
   const [mapLoaded, setMapLoaded] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem('nutrifork-theme')
-    return saved ? saved === 'dark' : true // Dark by default
+    return saved ? saved === 'dark' : false // Light by default
   })
+  // Modal states
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
+  const [showProfileModal, setShowProfileModal] = useState(false)
+  
   const navigate = useNavigate()
   const mapContainerRef = useRef(null)
   const mapRef = useRef(null)
@@ -277,7 +339,7 @@ function MapPage() {
   }, [GOOGLE_MAPS_API_KEY])
 
   // Search for nearby restaurants using Google Places API
-  // PRIORITÉ : Restos vegan/végétariens d'abord, puis les autres
+  // PRIORITÉ : Restos vegan/veggietariens d'abord, puis les autres
   const searchNearbyRestaurants = useCallback(async (location) => {
     if (!isLoaded || !window.google) return
 
@@ -297,7 +359,7 @@ function MapPage() {
         region: 'fr',
       }
 
-      // 1️⃣ D'abord : chercher les restos VEGAN et VÉGÉTARIENS
+      // 1️⃣ D'abord : chercher les restos VEGAN et VEGANTARIENS
       const veggieRequest = {
         ...baseRequest,
         includedPrimaryTypes: [
@@ -310,9 +372,9 @@ function MapPage() {
       try {
         const veggieResponse = await Place.searchNearby(veggieRequest)
         veggieResults = veggieResponse.places || []
-        console.log('🌱 Restos végé/vegan trouvés:', veggieResults.length)
+        console.log('🌱 Restos veggie/vegan trouvés:', veggieResults.length)
       } catch (e) {
-        console.log('Pas de restos végé trouvés, recherche classique...')
+        console.log('Pas de restos veggie trouvés, recherche classique...')
       }
 
       // 2️⃣ Ensuite : chercher les autres restos pour compléter
@@ -330,7 +392,7 @@ function MapPage() {
       const otherResults = otherResponse.places || []
       console.log('🍽️ Autres restos trouvés:', otherResults.length)
 
-      // 3️⃣ Merger : végé d'abord, puis les autres (sans doublons)
+      // 3️⃣ Merger : veggie d'abord, puis les autres (sans doublons)
       const veggieIds = new Set(veggieResults.map(p => p.id))
       const allPlaces = [
         ...veggieResults,
@@ -377,7 +439,7 @@ function MapPage() {
               rating: place.rating || 4.0,
               type: typeLabels[primaryType] || 'Restaurant',
               primaryType: primaryType,
-              isVeggie: isVeggie, // Flag pour identifier les restos végé
+              isVeggie: isVeggie, // Flag pour identifier les restos veggie
               dishes: [],
               isLoading: false,
               menuFetched: false
@@ -517,6 +579,11 @@ function MapPage() {
     navigate('/')
   }
 
+  // Handler pour la mise à jour des allergies depuis SettingsModal
+  const handleAllergiesUpdate = (newAllergies) => {
+    setUserAllergies(newAllergies)
+  }
+
   // No API keys - show setup screen
   if (!JAWG_ACCESS_TOKEN || !GOOGLE_MAPS_API_KEY) {
     return (
@@ -560,6 +627,9 @@ function MapPage() {
         onBack={handleBackToAllergies}
         isDarkMode={isDarkMode}
         onToggleTheme={handleToggleTheme}
+        user={user}
+        onSettings={() => setShowSettingsModal(true)}
+        onSignup={() => setShowProfileModal(true)}
       />
 
       {/* MapLibre Map */}
@@ -590,6 +660,24 @@ function MapPage() {
           isDarkMode={isDarkMode}
         />
       )}
+
+      {/* Settings Modal (pour users connectés) */}
+      <SettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+        user={user}
+        userAllergies={userAllergies}
+        onAllergiesUpdate={handleAllergiesUpdate}
+      />
+
+      {/* Profile/Signup Modal (pour users non connectés) */}
+      <ProfileModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        user={user}
+        setUser={setUser}
+        isDarkMode={isDarkMode}
+      />
     </div>
   )
 }

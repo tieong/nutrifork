@@ -3,8 +3,8 @@ import { supabase } from '../lib/supabase'
 
 const commonAllergies = [
   { id: 'gluten', name: 'Gluten', icon: '🌾' },
-  { id: 'lactose', name: 'Lactose', icon: '🥛' },
-  { id: 'nuts', name: 'Nuts', icon: '🥜' },
+  { id: 'lactose', name: 'Dairy', icon: '🥛' },
+  { id: 'nuts', name: 'Tree Nuts', icon: '🥜' },
   { id: 'eggs', name: 'Eggs', icon: '🥚' },
   { id: 'fish', name: 'Fish', icon: '🐟' },
   { id: 'shellfish', name: 'Shellfish', icon: '🦐' },
@@ -12,7 +12,7 @@ const commonAllergies = [
   { id: 'sesame', name: 'Sesame', icon: '🌰' },
 ]
 
-function ProfileModal({ isOpen, onClose, user, setUser }) {
+function ProfileModal({ isOpen, onClose, user, setUser, isDarkMode }) {
   const [activeTab, setActiveTab] = useState('login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -45,14 +45,12 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
     
     if (data) {
       setProfile(data)
-      // Sync allergies to localStorage for the app
       if (data.allergies) {
         localStorage.setItem('userAllergies', JSON.stringify(data.allergies))
       }
     }
   }
 
-  // Login with email/password
   const handleLogin = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -72,7 +70,6 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
     setLoading(false)
   }
 
-  // Sign up with email/password
   const handleSignup = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -91,7 +88,6 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
     if (error) {
       setError(error.message)
     } else {
-      // Create profile in database
       const currentAllergies = JSON.parse(localStorage.getItem('userAllergies') || '[]')
       
       await supabase.from('profiles').upsert({
@@ -108,14 +104,12 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
     setLoading(false)
   }
 
-  // Logout
   const handleLogout = async () => {
     await supabase.auth.signOut()
     setUser(null)
     setProfile(null)
   }
 
-  // Allergies management
   const toggleAllergy = (allergyId) => {
     setTempAllergies(prev =>
       prev.includes(allergyId)
@@ -148,28 +142,52 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
 
   if (!isOpen) return null
 
+  // Theme-aware classes
+  const modalBg = isDarkMode 
+    ? 'bg-[#1a1f1c] border border-white/10' 
+    : 'bg-white'
+  
+  const textPrimary = isDarkMode ? 'text-white' : 'text-gray-800'
+  const textSecondary = isDarkMode ? 'text-white/60' : 'text-gray-500'
+  const textMuted = isDarkMode ? 'text-white/40' : 'text-gray-400'
+  
+  const inputBg = isDarkMode 
+    ? 'bg-white/5 border-white/10 text-white placeholder-white/30 focus:border-emerald-500 focus:ring-emerald-500/20' 
+    : 'bg-white border-gray-200 text-gray-800 placeholder-gray-400 focus:border-emerald-500 focus:ring-emerald-500/20'
+  
+  const labelColor = isDarkMode ? 'text-white/80' : 'text-gray-700'
+  
+  const tabActive = 'text-emerald-500 border-b-2 border-emerald-500'
+  const tabInactive = isDarkMode ? 'text-white/40 hover:text-white/60' : 'text-gray-400 hover:text-gray-600'
+  
+  const borderColor = isDarkMode ? 'border-white/10' : 'border-gray-100'
+  
+  const hoverBg = isDarkMode ? 'hover:bg-white/5' : 'hover:bg-gray-50'
+  
+  const cardBg = isDarkMode ? 'bg-white/5' : ''
+
   return (
     <div 
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative"
+        className={`${modalBg} rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative`}
         onClick={e => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-all z-10"
+          className={`absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full ${hoverBg} transition-all z-10`}
         >
-          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className={`w-5 h-5 ${textMuted}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
         {/* Error message */}
         {error && (
-          <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+          <div className={`mx-6 mt-4 p-3 rounded-xl text-sm ${isDarkMode ? 'bg-red-500/20 border border-red-500/30 text-red-400' : 'bg-red-50 border border-red-200 text-red-600'}`}>
             {error}
           </div>
         )}
@@ -177,13 +195,11 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
         {!user ? (
           <>
             {/* Login/Signup Tabs */}
-            <div className="flex border-b border-gray-100">
+            <div className={`flex border-b ${borderColor}`}>
               <button
                 onClick={() => { setActiveTab('login'); setError(null); }}
                 className={`flex-1 py-4 text-sm font-medium transition-all ${
-                  activeTab === 'login' 
-                    ? 'text-emerald-600 border-b-2 border-emerald-600' 
-                    : 'text-gray-400 hover:text-gray-600'
+                  activeTab === 'login' ? tabActive : tabInactive
                 }`}
               >
                 Login
@@ -191,9 +207,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
               <button
                 onClick={() => { setActiveTab('signup'); setError(null); }}
                 className={`flex-1 py-4 text-sm font-medium transition-all ${
-                  activeTab === 'signup' 
-                    ? 'text-emerald-600 border-b-2 border-emerald-600' 
-                    : 'text-gray-400 hover:text-gray-600'
+                  activeTab === 'signup' ? tabActive : tabInactive
                 }`}
               >
                 Sign up
@@ -204,25 +218,25 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
               {activeTab === 'login' ? (
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label className={`block text-sm font-medium ${labelColor} mb-1`}>Email</label>
                     <input
                       type="email"
                       value={formData.email}
                       onChange={e => setFormData({ ...formData, email: e.target.value })}
                       placeholder="you@email.com"
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                      className={`w-full px-4 py-3 rounded-xl border ${inputBg} focus:ring-2 outline-none transition-all`}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <label className={`block text-sm font-medium ${labelColor} mb-1`}>Password</label>
                     <input
                       type="password"
                       value={formData.password}
                       onChange={e => setFormData({ ...formData, password: e.target.value })}
                       placeholder="••••••••"
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                      className={`w-full px-4 py-3 rounded-xl border ${inputBg} focus:ring-2 outline-none transition-all`}
                     />
                   </div>
                   <button
@@ -242,29 +256,29 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
               ) : (
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">First name</label>
+                    <label className={`block text-sm font-medium ${labelColor} mb-1`}>First name</label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={e => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Mary"
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                      className={`w-full px-4 py-3 rounded-xl border ${inputBg} focus:ring-2 outline-none transition-all`}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label className={`block text-sm font-medium ${labelColor} mb-1`}>Email</label>
                     <input
                       type="email"
                       value={formData.email}
                       onChange={e => setFormData({ ...formData, email: e.target.value })}
                       placeholder="you@email.com"
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                      className={`w-full px-4 py-3 rounded-xl border ${inputBg} focus:ring-2 outline-none transition-all`}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <label className={`block text-sm font-medium ${labelColor} mb-1`}>Password</label>
                     <input
                       type="password"
                       value={formData.password}
@@ -272,7 +286,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                       placeholder="••••••••"
                       required
                       minLength={6}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+                      className={`w-full px-4 py-3 rounded-xl border ${inputBg} focus:ring-2 outline-none transition-all`}
                     />
                   </div>
                   <button
@@ -297,7 +311,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
           <div className="p-6">
             <button
               onClick={() => setShowAllergiesEditor(false)}
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-4"
+              className={`flex items-center gap-2 ${textSecondary} ${hoverBg} px-2 py-1 rounded-lg mb-4`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -305,7 +319,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
               Back
             </button>
 
-            <h3 className="text-lg font-bold text-gray-800 mb-4">My allergies</h3>
+            <h3 className={`text-lg font-bold ${textPrimary} mb-4`}>My allergies</h3>
             
             <div className="grid grid-cols-2 gap-3 mb-6">
               {commonAllergies.map(allergy => (
@@ -314,12 +328,14 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
                   onClick={() => toggleAllergy(allergy.id)}
                   className={`p-3 rounded-xl border-2 transition-all flex items-center gap-2 ${
                     tempAllergies.includes(allergy.id)
-                      ? 'border-emerald-500 bg-emerald-50'
-                      : 'border-gray-200 hover:border-emerald-300'
+                      ? 'border-emerald-500 bg-emerald-500/20'
+                      : isDarkMode 
+                        ? 'border-white/10 hover:border-emerald-500/50' 
+                        : 'border-gray-200 hover:border-emerald-300'
                   }`}
                 >
                   <span className="text-xl">{allergy.icon}</span>
-                  <span className="text-sm font-medium text-gray-700">{allergy.name}</span>
+                  <span className={`text-sm font-medium ${textPrimary}`}>{allergy.name}</span>
                 </button>
               ))}
             </div>
@@ -339,21 +355,25 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
               <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center mx-auto mb-3 text-white text-2xl font-bold shadow-lg shadow-emerald-500/30">
                 {(profile?.name || user?.email)?.charAt(0).toUpperCase() || '?'}
               </div>
-              <h2 className="text-xl font-bold text-gray-800">
+              <h2 className={`text-xl font-bold ${textPrimary}`}>
                 {profile?.name || user?.user_metadata?.name || 'User'}
               </h2>
-              <p className="text-sm text-gray-500">{user?.email}</p>
+              <p className={`text-sm ${textSecondary}`}>{user?.email}</p>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-2 gap-3 mb-6">
-              <div className="bg-amber-50 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-amber-600">{profile?.allergies?.length || 0}</div>
-                <div className="text-xs text-amber-700">Allergies</div>
+              <div className={`rounded-xl p-4 text-center ${isDarkMode ? 'bg-amber-500/20' : 'bg-amber-50'}`}>
+                <div className={`text-2xl font-bold ${isDarkMode ? 'text-amber-400' : 'text-amber-600'}`}>
+                  {profile?.allergies?.length || 0}
+                </div>
+                <div className={`text-xs ${isDarkMode ? 'text-amber-400/70' : 'text-amber-700'}`}>Allergies</div>
               </div>
-              <div className="bg-emerald-50 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-emerald-600">{profile?.favorites?.length || 0}</div>
-                <div className="text-xs text-emerald-700">Favorites</div>
+              <div className={`rounded-xl p-4 text-center ${isDarkMode ? 'bg-emerald-500/20' : 'bg-emerald-50'}`}>
+                <div className={`text-2xl font-bold ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                  {profile?.favorites?.length || 0}
+                </div>
+                <div className={`text-xs ${isDarkMode ? 'text-emerald-400/70' : 'text-emerald-700'}`}>Favorites</div>
               </div>
             </div>
 
@@ -361,26 +381,26 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
             <div className="space-y-2 mb-6">
               <button 
                 onClick={openAllergiesEditor}
-                className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-all"
+                className={`w-full flex items-center justify-between p-3 rounded-xl ${hoverBg} transition-all`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-amber-500/20' : 'bg-amber-100'}`}>
                     <span>⚠️</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-700">My allergies</span>
+                  <span className={`text-sm font-medium ${textPrimary}`}>My allergies</span>
                 </div>
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 ${textMuted}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
-              <button className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-all">
+              <button className={`w-full flex items-center justify-between p-3 rounded-xl ${hoverBg} transition-all`}>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-rose-500/20' : 'bg-rose-100'}`}>
                     <span>❤️</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-700">Favorite restaurants</span>
+                  <span className={`text-sm font-medium ${textPrimary}`}>Favorite restaurants</span>
                 </div>
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 ${textMuted}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
@@ -388,7 +408,7 @@ function ProfileModal({ isOpen, onClose, user, setUser }) {
 
             <button
               onClick={handleLogout}
-              className="w-full py-3 text-sm text-red-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+              className={`w-full py-3 text-sm rounded-xl transition-all ${isDarkMode ? 'text-red-400 hover:bg-red-500/10' : 'text-red-500 hover:text-red-600 hover:bg-red-50'}`}
             >
               Sign out
             </button>
