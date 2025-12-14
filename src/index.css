@@ -6,12 +6,15 @@
    NUTRIFORK - Dual Theme Support
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --color-primary: #10b981;
-  --color-primary-light: #34d399;
-  --color-user: #f43f5e;
+  --color-primary: #f9b60d;
+  --color-primary-light: #fcd34d;
+  --color-secondary: #ff7f00;
+  --color-black: #0a0a0a;
+  --color-near-black: #141414;
+  --color-user: #ff7f00;
 }
 
 * {
@@ -20,9 +23,63 @@
 
 body {
   margin: 0;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  letter-spacing: -0.01em;
+}
+
+/* Typographie optimisée pour NutriFork */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+button, input, select, textarea {
+  font-family: 'Inter', sans-serif;
+}
+
+/* ============================================
+   NAVBAR & UI ELEMENTS MODERN STYLES
+   ============================================ */
+
+/* Amélioration du rendu des textes */
+.navbar-text {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Style pour les badges avec design minimaliste */
+.badge-modern {
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.badge-modern:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Style pour les boutons avec effet moderne */
+.button-modern {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-modern:hover {
+  transform: translateY(-2px);
+}
+
+.button-modern:active {
+  transform: translateY(0);
 }
 
 /* ============================================
@@ -54,47 +111,38 @@ body {
   50% { opacity: 0.8; transform: scale(1.1); }
 }
 
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(249, 182, 13, 0.6);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 20px rgba(249, 182, 13, 0.9);
+  }
+}
+
+@keyframes pill-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.pill-nav-container {
+  animation: pill-pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 .animate-slide-down {
   animation: slide-down 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .animate-fade-up {
   animation: fade-up 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-/* ============================================
-   HEADER - DARK MODE
-   ============================================ */
-
-.header-dark {
-  background: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-}
-
-/* ============================================
-   HEADER - LIGHT MODE
-   ============================================ */
-
-.header-light {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* ============================================
-   HEADER GLASS BASE
-   ============================================ */
-
-.header-glass {
-  border-radius: 16px;
-  transition: all 0.3s ease;
 }
 
 /* ============================================
@@ -136,12 +184,12 @@ body {
   transform: translate(-50%, -50%);
   width: 18px;
   height: 18px;
-  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  background: linear-gradient(135deg, #ff7f00 0%, #cc6600 100%);
   border-radius: 50%;
   border: 3px solid white;
-  box-shadow: 
-    0 0 0 2px rgba(244, 63, 94, 0.3),
-    0 0 16px rgba(244, 63, 94, 0.4),
+  box-shadow:
+    0 0 0 2px rgba(255, 127, 0, 0.3),
+    0 0 16px rgba(255, 127, 0, 0.5),
     0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 3;
 }
@@ -153,7 +201,7 @@ body {
   transform: translate(-50%, -50%);
   width: 18px;
   height: 18px;
-  background: rgba(244, 63, 94, 0.4);
+  background: rgba(255, 127, 0, 0.4);
   border-radius: 50%;
   animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -183,7 +231,7 @@ body {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(16, 185, 129, 0.5);
+  background: rgba(249, 182, 13, 0.5);
   filter: blur(12px);
   opacity: 0.5;
   transition: all 0.3s ease;
@@ -203,22 +251,22 @@ body {
   transform: translate(-50%, -50%);
   width: 44px;
   height: 44px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
   border-radius: 50%;
   border: 3px solid white;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 
-    0 2px 12px rgba(16, 185, 129, 0.4),
-    0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 2px 12px rgba(249, 182, 13, 0.5),
+    0 4px 16px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
 }
 
 .restaurant-marker:hover .restaurant-marker-inner {
-  box-shadow: 
-    0 4px 20px rgba(16, 185, 129, 0.5),
-    0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow:
+    0 4px 20px rgba(249, 182, 13, 0.7),
+    0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .restaurant-marker-icon {
@@ -261,41 +309,41 @@ body {
 
 /* Rating color variants */
 .restaurant-marker.rating-excellent .restaurant-marker-glow {
-  background: rgba(34, 197, 94, 0.5);
+  background: rgba(249, 182, 13, 0.6);
 }
 
 .restaurant-marker.rating-excellent .restaurant-marker-inner {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
 }
 
 .restaurant-marker.rating-high .restaurant-marker-glow {
-  background: rgba(16, 185, 129, 0.5);
+  background: rgba(249, 182, 13, 0.5);
 }
 
 .restaurant-marker.rating-medium .restaurant-marker-glow {
-  background: rgba(245, 158, 11, 0.4);
+  background: rgba(255, 127, 0, 0.4);
 }
 
 .restaurant-marker.rating-medium .restaurant-marker-inner {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: linear-gradient(135deg, #ff7f00 0%, #cc6600 100%);
 }
 
 /* ============================================
-   VEGGIE MARKER STYLES
+   VEGGIE MARKER STYLES (Premium Gold/Orange)
    ============================================ */
 
 .restaurant-marker.veggie-marker .restaurant-marker-glow {
-  background: rgba(34, 197, 94, 0.6);
+  background: rgba(249, 182, 13, 0.7);
   animation: veggie-pulse 2s ease-in-out infinite;
 }
 
 .restaurant-marker.veggie-marker .restaurant-marker-inner {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+  background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
+  box-shadow: 0 0 20px rgba(249, 182, 13, 0.6);
 }
 
 .restaurant-marker.veggie-marker .restaurant-marker-rating {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
     color: white;
 }
 
@@ -303,26 +351,116 @@ body {
   position: absolute;
   top: -8px;
   right: -8px;
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
   color: white;
   font-size: 8px;
   font-weight: 700;
   padding: 2px 5px;
   border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
+  box-shadow: 0 2px 8px rgba(249, 182, 13, 0.5);
   letter-spacing: 0.5px;
   z-index: 10;
 }
 
 @keyframes veggie-pulse {
-  0%, 100% { 
+  0%, 100% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0.6;
   }
-  50% { 
+  50% {
     transform: translate(-50%, -50%) scale(1.3);
     opacity: 0.3;
   }
+}
+
+/* ============================================
+   CARROTE MARKERS (Modern & Minimalist)
+   ============================================ */
+
+.carrote-marker-container {
+  animation: marker-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.carrote-marker {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+.carrote-marker:hover {
+  transform: scale(1.2) translateY(-6px);
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
+  z-index: 100 !important;
+}
+
+.carrote-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+/* Effet de glow subtil sur hover pour les carottes good */
+.carrote-marker.carrote-good:hover .carrote-icon {
+  filter: brightness(1.1) drop-shadow(0 0 12px rgba(249, 182, 13, 0.6));
+}
+
+/* Effet plus subtil pour les carottes bad */
+.carrote-marker.carrote-bad:hover .carrote-icon {
+  filter: brightness(1.05) drop-shadow(0 0 8px rgba(100, 100, 100, 0.4));
+}
+
+.carrote-rating {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  background: white;
+  color: #111;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 10px;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    0 0 0 2px rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  z-index: 4;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.carrote-marker:hover .carrote-rating {
+  transform: scale(1.15);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 0 0 2px rgba(255, 255, 255, 1);
+}
+
+.carrote-rating svg {
+  width: 11px;
+  height: 11px;
+  color: #fbbf24;
+}
+
+/* Style doré pour les restos veggie */
+.carrote-marker.carrote-good .carrote-rating {
+  background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
+  color: white;
+  box-shadow:
+    0 2px 8px rgba(249, 182, 13, 0.4),
+    0 0 0 2px rgba(249, 182, 13, 0.2);
+}
+
+.carrote-marker.carrote-good:hover .carrote-rating {
+  box-shadow:
+    0 4px 12px rgba(249, 182, 13, 0.6),
+    0 0 20px rgba(249, 182, 13, 0.3);
 }
 
 /* ============================================
@@ -400,4 +538,439 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(16, 185, 129, 0.6);
+}
+
+/* ============================================
+   MODERN NAVBAR & FOOTER STYLES
+   ============================================ */
+
+/* Assure que le contenu principal ne soit pas caché sous la navbar et le footer */
+.map-container-with-nav {
+  padding-top: 64px; /* Height of navbar */
+  padding-bottom: 68px; /* Height of footer */
+  height: 100vh;
+}
+
+/* Animation d'apparition pour navbar et footer */
+@keyframes slide-in-top {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-bottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+nav {
+  animation: slide-in-top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+footer {
+  animation: slide-in-bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Effet hover moderne pour les liens du footer */
+footer a {
+  position: relative;
+}
+
+footer a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+
+footer a:hover::after {
+  width: 100%;
+}
+
+/* ============================================
+   PILL NAVIGATION & FOOTER STYLES
+   ============================================ */
+
+.pill-nav-container {
+  position: fixed;
+  top: 1.5rem;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 100vw;
+  padding: 0 1rem;
+}
+
+@media (max-width: 768px) {
+  .pill-nav-container {
+    width: calc(100% - 2rem);
+    max-width: calc(100% - 2rem);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    top: 1rem;
+  }
+}
+
+.pill-nav {
+  --nav-h: 48px;
+  --pill-pad-x: 20px;
+  --pill-gap: 4px;
+  width: max-content;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  pointer-events: auto;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .pill-nav {
+    width: 100%;
+    justify-content: space-between;
+    background: transparent;
+    gap: 8px;
+  }
+  
+  .pill-nav-items {
+    padding: 3px;
+    gap: 3px;
+  }
+}
+
+.pill-nav-items {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: var(--nav-h);
+  background: #ffffff;
+  border-radius: 9999px;
+  padding: 4px;
+  gap: var(--pill-gap);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  pointer-events: auto;
+}
+
+.pill-logo {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: transparent;
+  padding: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  box-shadow: none;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  margin-right: 8px;
+  pointer-events: auto;
+}
+
+.pill-logo:hover {
+  transform: scale(1.1);
+}
+
+.pill-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.pill-brand {
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+  border-right: 1px solid var(--pill-bg, #fff);
+  margin-right: 8px;
+}
+
+@media (max-width: 992px) {
+  .pill-brand {
+    padding: 0 10px;
+    margin-right: 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pill-brand {
+    display: none;
+  }
+}
+
+.brand-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 992px) {
+  .brand-name {
+    font-size: 12px;
+  }
+}
+
+.brand-tagline {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--pill-bg, #fff);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+@media (max-width: 992px) {
+  .brand-tagline {
+    font-size: 8px;
+  }
+}
+
+.pill-list {
+  list-style: none;
+  display: flex;
+  align-items: stretch;
+  gap: var(--pill-gap);
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.pill-list > li {
+  display: flex;
+  height: 100%;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 var(--pill-pad-x);
+  background: var(--pill-bg, #fff);
+  color: var(--pill-text, var(--base, #000));
+  text-decoration: none;
+  border-radius: 9999px;
+  box-sizing: border-box;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 0;
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  transition: transform 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .pill {
+    font-size: 20px;
+    padding: 0 14px;
+  }
+}
+
+.pill:active {
+  transform: scale(0.95);
+}
+
+.pill-small {
+  font-size: 13px;
+  padding: 0 14px;
+  font-weight: 500;
+}
+
+.pill .hover-circle {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  border-radius: 50%;
+  background: var(--base, #000);
+  z-index: 1;
+  display: block;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.pill .label-stack {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  z-index: 2;
+}
+
+.pill .pill-label {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  line-height: 1;
+  will-change: transform;
+}
+
+.pill .pill-label-hover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--hover-text, #fff);
+  z-index: 3;
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.pill-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  background: #ff7f00;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 4px;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(255, 127, 0, 0.4);
+}
+
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+}
+
+.mobile-menu-button {
+  width: var(--nav-h);
+  height: var(--nav-h);
+  border-radius: 50%;
+  background: var(--pill-bg, #ff7f00);
+  border: none;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  flex-shrink: 0;
+  pointer-events: auto;
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-button {
+    display: flex;
+  }
+}
+
+.hamburger-line {
+  width: 18px;
+  height: 2px;
+  background: var(--pill-text, #fff);
+  border-radius: 2px;
+  transition: all 0.01s ease;
+  transform-origin: center;
+}
+
+.mobile-menu-popover {
+  position: fixed;
+  top: 5rem;
+  left: 1rem;
+  right: 1rem;
+  background: var(--base, #000);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  z-index: 998;
+  opacity: 0;
+  transform-origin: top center;
+  visibility: hidden;
+  pointer-events: auto;
+}
+
+.mobile-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 18px;
+  color: var(--pill-text, #fff);
+  background-color: var(--pill-bg, #fff);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 18px;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.mobile-menu-link:hover {
+  background-color: var(--base);
+  color: var(--hover-text, #fff);
+  transform: translateX(4px);
+}
+
+.mobile-badge {
+  min-width: 22px;
+  height: 22px;
+  background: #ff7f00;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 0 6px;
 }

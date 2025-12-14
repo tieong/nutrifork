@@ -10,7 +10,12 @@ import MapPage from './pages/MapPage'
 
 function App() {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <Routes>
         {/* Route principale - Map directe */}
         <Route
