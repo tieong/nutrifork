@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getMockDishesWithDelay } from '../services/mockDishesService'
+import carrotGoodSvg from '../assets/carrot-good-optimized.svg?raw'
+import carrotBadSvg from '../assets/carrot-bad-optimized.svg?raw'
 
 // Set to true to use mock dishes, false to use Perplexity API
 const USE_MOCK_DISHES = true
@@ -82,6 +84,10 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
   // Compter les plats safe (végétariens sans allergènes) pour info
   const safeCount = dishes.filter(d => isDishSafe(d)).length
 
+  // Déterminer si c'est un restaurant végé (>= 70% de plats végé)
+  const isVeggieRestaurant = veggieScore >= 70
+  const carrotIcon = isVeggieRestaurant ? carrotGoodSvg : carrotBadSvg
+
   return (
     <div 
       className={`fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-50 ${isDarkMode ? 'bg-black/70' : 'bg-black/40'}`}
@@ -106,8 +112,8 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/25">
-                    <span className="text-2xl">🍽️</span>
+                  <div className="w-12 h-12 flex items-center justify-center">
+                    <div style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }} dangerouslySetInnerHTML={{ __html: carrotIcon }} />
                   </div>
                   <div>
                     <h2 className={`text-xl font-bold leading-tight ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
