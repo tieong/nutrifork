@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { useState } from 'react'
 import MapPage from './pages/MapPage'
+import SplashScreen from './components/SplashScreen'
 
 // ============================================
 // APP - Simplifié pour la démo
@@ -9,21 +11,27 @@ import MapPage from './pages/MapPage'
 // ============================================
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true)
+
   return (
-    <Router
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true
-      }}
-    >
-      <Routes>
-        {/* Route principale - Map directe */}
-        <Route
-          path="/"
-          element={<MapPage />}
-        />
-      </Routes>
-    </Router>
+    <>
+      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
+        <Routes>
+          {/* Route principale - Map directe */}
+          <Route
+            path="/"
+            element={<MapPage />}
+          />
+        </Routes>
+      </Router>
+    </>
   )
 }
 
