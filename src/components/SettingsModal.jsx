@@ -47,403 +47,103 @@ function SettingsModal({ isOpen, onClose, userAllergies, onAllergiesUpdate }) {
   return (
     <>
       <style>{`
-        .settings-overlay {
-          position: fixed;
-          inset: 0;
-          z-index: 1000;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 20px;
-          animation: settingsOverlayIn 0.3s ease-out;
-        }
-
-        @keyframes settingsOverlayIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        .settings-backdrop {
-          position: absolute;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.8);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-        }
-
-        .settings-modal {
-          position: relative;
-          width: 100%;
-          max-width: 440px;
-          max-height: 85vh;
-          background: linear-gradient(165deg, rgba(30, 35, 32, 0.98) 0%, rgba(20, 25, 22, 0.98) 100%);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 28px;
-          overflow: hidden;
-          animation: settingsModalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-          display: flex;
-          flex-direction: column;
-        }
-
-        @keyframes settingsModalIn {
-          from { opacity: 0; transform: scale(0.9) translateY(20px); }
-          to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .settings-header {
-          padding: 24px 24px 0;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .settings-title {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .settings-icon {
-          width: 44px;
-          height: 44px;
-          background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%);
-          border: 1px solid rgba(34, 197, 94, 0.3);
-          border-radius: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 22px;
-        }
-
-        .settings-title h2 {
-          color: white;
-          font-size: 1.25rem;
-          font-weight: 600;
-          margin: 0;
-        }
-
-        .settings-title p {
-          color: rgba(255, 255, 255, 0.5);
-          font-size: 0.8rem;
-          margin: 2px 0 0;
-        }
-
-        .settings-close {
-          width: 36px;
-          height: 36px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-          color: rgba(255, 255, 255, 0.5);
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s ease;
-        }
-
-        .settings-close:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: white;
-        }
-
-        /* Tabs */
-        .settings-tabs {
-          display: flex;
-          gap: 8px;
-          padding: 20px 24px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .settings-tab {
-          flex: 1;
-          padding: 10px 16px;
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid rgba(255, 255, 255, 0.06);
-          border-radius: 10px;
-          color: rgba(255, 255, 255, 0.5);
-          font-size: 13px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-        }
-
-        .settings-tab:hover {
-          background: rgba(255, 255, 255, 0.06);
-        }
-
-        .settings-tab.active {
-          background: rgba(34, 197, 94, 0.15);
-          border-color: rgba(34, 197, 94, 0.3);
-          color: #4ade80;
-        }
-
-        /* Content */
-        .settings-content {
-          flex: 1;
-          overflow-y: auto;
-          padding: 20px 24px;
-        }
-
-        .settings-section-title {
-          color: rgba(255, 255, 255, 0.4);
-          font-size: 11px;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          margin-bottom: 16px;
-        }
-
-        /* Allergies Grid */
-        .allergies-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-        }
-
-        .allergy-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 14px 16px;
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.06);
-          border-radius: 14px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .allergy-item:hover {
-          background: rgba(255, 255, 255, 0.04);
-          border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .allergy-item.selected {
-          background: rgba(34, 197, 94, 0.1);
-          border-color: rgba(34, 197, 94, 0.4);
-        }
-
-        .allergy-icon {
-          font-size: 1.5rem;
-        }
-
-        .allergy-name {
-          flex: 1;
-          color: rgba(255, 255, 255, 0.8);
-          font-size: 13px;
-          font-weight: 500;
-        }
-
-        .allergy-item.selected .allergy-name {
-          color: white;
-        }
-
-        .allergy-check {
-          width: 22px;
-          height: 22px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 2px solid rgba(255, 255, 255, 0.15);
-          border-radius: 6px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s ease;
-        }
-
-        .allergy-item.selected .allergy-check {
-          background: #22c55e;
-          border-color: #22c55e;
-        }
-
-        .allergy-check svg {
-          width: 12px;
-          height: 12px;
-          color: white;
-          opacity: 0;
-          transform: scale(0.5);
-          transition: all 0.2s ease;
-        }
-
-        .allergy-item.selected .allergy-check svg {
-          opacity: 1;
-          transform: scale(1);
-        }
-
-        /* Account Section */
-        .account-section {
-          margin-top: 24px;
-          padding-top: 24px;
-          border-top: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .account-info {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          padding: 16px;
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.06);
-          border-radius: 14px;
-          margin-bottom: 16px;
-        }
-
-        .account-avatar {
-          width: 48px;
-          height: 48px;
-          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-          border-radius: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-size: 1.25rem;
-          font-weight: 600;
-        }
-
-        .account-details h3 {
-          color: white;
-          font-size: 1rem;
-          font-weight: 600;
-          margin: 0 0 4px;
-        }
-
-        .account-details p {
-          color: rgba(255, 255, 255, 0.5);
-          font-size: 0.8rem;
-          margin: 0;
-        }
-
-        .logout-btn {
-          width: 100%;
-          padding: 14px;
-          background: rgba(239, 68, 68, 0.1);
-          border: 1px solid rgba(239, 68, 68, 0.2);
-          border-radius: 12px;
-          color: #f87171;
-          font-size: 14px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-        }
-
-        .logout-btn:hover {
-          background: rgba(239, 68, 68, 0.15);
-          border-color: rgba(239, 68, 68, 0.3);
-        }
-
-        /* Footer */
-        .settings-footer {
-          padding: 20px 24px;
-          border-top: 1px solid rgba(255, 255, 255, 0.06);
-          display: flex;
-          gap: 12px;
-        }
-
-        .settings-btn {
-          flex: 1;
-          padding: 14px 20px;
-          border-radius: 12px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .settings-btn-cancel {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: rgba(255, 255, 255, 0.7);
-        }
-
-        .settings-btn-cancel:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: white;
-        }
-
-        .settings-btn-save {
-          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-          border: none;
-          color: white;
-          box-shadow: 0 10px 30px -10px rgba(34, 197, 94, 0.5);
-        }
-
-        .settings-btn-save:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 15px 40px -10px rgba(34, 197, 94, 0.6);
-        }
-
-        .settings-btn-save:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-          transform: none;
+        @keyframes slideDown {
+          from { 
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to { 
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       `}</style>
 
-      <div className="settings-overlay">
-        <div className="settings-backdrop" onClick={onClose}></div>
-        
-        <div className="settings-modal">
-          {/* Header */}
-          <div className="settings-header">
-            <div className="settings-title">
-              <div className="settings-icon">⚙️</div>
-              <div>
-                <h2>Préférences</h2>
-                <p>Personnalisez votre expérience</p>
+      <div 
+        className="fixed inset-0 flex items-start justify-center pt-32 px-4 z-50"
+        onClick={onClose}
+        style={{ animation: 'slideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+      >
+        <div 
+          className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden"
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="flex flex-col">
+            {/* Header */}
+            <div className="px-5 py-3 flex items-center justify-between border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🍽️</span>
+                <div>
+                  <h2 className="text-base font-bold text-gray-900">Allergies & Préférences</h2>
+                  <p className="text-xs text-gray-500">Sélectionnez vos restrictions alimentaires</p>
+                </div>
+              </div>
+              <button 
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-all" 
+                onClick={onClose}
+              >
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="px-5 py-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {commonAllergies.map((allergy) => {
+                  const isSelected = selectedAllergies.includes(allergy.id)
+                  return (
+                    <button
+                      key={allergy.id}
+                      className={`rounded-2xl p-3 transition-all duration-200 ${
+                        isSelected 
+                          ? 'bg-orange-50 border-2 border-orange-500 shadow-sm' 
+                          : 'bg-gray-50 border-2 border-transparent hover:border-gray-200 hover:bg-gray-100'
+                      }`}
+                      onClick={() => toggleAllergy(allergy.id)}
+                    >
+                      <div className="flex flex-col items-center gap-1.5">
+                        <span className="text-2xl">{allergy.icon}</span>
+                        <span className={`text-xs font-semibold text-center leading-tight ${
+                          isSelected ? 'text-orange-600' : 'text-gray-700'
+                        }`}>
+                          {allergy.name}
+                        </span>
+                        <div className={`w-4 h-4 rounded-full flex items-center justify-center transition-all ${
+                          isSelected 
+                            ? 'bg-orange-500' 
+                            : 'bg-white border-2 border-gray-300'
+                        }`}>
+                          {isSelected && (
+                            <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
             </div>
-            <button className="settings-close" onClick={onClose}>
-              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
 
-          {/* Content */}
-          <div className="settings-content">
-            <div className="settings-section-title">Sélectionnez vos allergies</div>
-            <div className="allergies-grid">
-              {commonAllergies.map((allergy) => {
-                const isSelected = selectedAllergies.includes(allergy.id)
-                return (
-                  <button
-                    key={allergy.id}
-                    className={`allergy-item ${isSelected ? 'selected' : ''}`}
-                    onClick={() => toggleAllergy(allergy.id)}
-                  >
-                    <span className="allergy-icon">{allergy.icon}</span>
-                    <span className="allergy-name">{allergy.name}</span>
-                    <div className="allergy-check">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  </button>
-                )
-              })}
+            {/* Footer */}
+            <div className="px-5 py-3 border-t border-gray-100 flex gap-2.5">
+              <button
+                className="flex-1 py-2.5 px-4 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-sm transition-all"
+                onClick={onClose}
+              >
+                Annuler
+              </button>
+              <button
+                className="flex-1 py-2.5 px-4 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? 'Sauvegarde...' : 'Enregistrer'}
+              </button>
             </div>
-          </div>
-
-          {/* Footer */}
-          <div className="settings-footer">
-            <button className="settings-btn settings-btn-cancel" onClick={onClose}>
-              Annuler
-            </button>
-            <button
-              className="settings-btn settings-btn-save"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? 'Sauvegarde...' : 'Sauvegarder'}
-            </button>
           </div>
         </div>
       </div>

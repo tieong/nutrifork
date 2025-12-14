@@ -1,0 +1,103 @@
+{
+  "success": true,
+  "restaurant": {
+    "restaurant_id": 1,
+    "name": "2abdum",
+    "type": "Unknown",
+    "location": "Unknown",
+    "menu": [
+      {
+        "id": 1,
+        "name": "\u0152uf Mollet en Croquette",
+        "description": "Breaded soft-boiled egg, bell peppers cream",
+        "price": 11.0
+      },
+      {
+        "id": 2,
+        "name": "Burrata, P\u00eaches et Noix",
+        "description": "Burrata cheese with peaches and nuts, raspberry dressing",
+        "price": 12.0
+      },
+      {
+        "id": 3,
+        "name": "Tempuras de Crevettes x5",
+        "description": "Crispy shrimp tempura x5, sweet chili sauce",
+        "price": 16.5
+      },
+      {
+        "id": 4,
+        "name": "6 Gros Escargots de Bourgogne",
+        "description": "Traditional French snails from La Maison de l'Escargot",
+        "price": 16.5
+      },
+      {
+        "id": 5,
+        "name": "Nems Croustillants au Poulet x4",
+        "description": "Crispy chicken spring rolls x4",
+        "price": 12.5
+      },
+      {
+        "id": 6,
+        "name": "Camembert R\u00f4ti au Miel",
+        "description": "Roasted camembert cheese with honey",
+        "price": 11.0
+      },
+      {
+        "id": 7,
+        "name": "C\u00e9sar",
+        "description": "Romaine, breaded chicken breast, Grana Padano cheese, tomatoes, hard boiled egg, croutons, caesar sauce",
+        "price": 17.5
+      },
+      {
+        "id": 8,
+        "name": "Mykonos",
+        "description": "Mixed salad leaves, avocado, Feta cheese, falafels, pomegranate, hummus, fresh herbs, tomatoes, olive oil, balsamic vinegar",
+        "price": 17.5
+      },
+      {
+        "id": 9,
+        "name": "Salade Croquante",
+        "description": "Burrata cheese, croutons, Serrano ham, grilled vegetables, pesto & pistachio dressing",
+        "price": 19.5
+      },
+      {
+        "id": 10,
+        "name": "Avocado Toast",
+        "description": "Traditional bread, cream cheese, avocado, Feta cheese, pomegranate salad. Served with salad",
+        "price": 16.5
+      },
+      {
+        "id": 11,
+        "name": "Croque Monsieur",
+        "description": "Cooked ham and Emmental cheese sandwich. Served with french fries or salad",
+        "price": 15.5
+      },
+      {
+        "id": 12,
+        "name": "Club Sandwich",
+        "description": "Chicken, salad, tomatoes, organic egg, red onion. Served with french fries or salad",
+        "price": 17.5
+      }
+    ]
+  },
+  "scoring": {
+    "scored_dishes": [],
+    "overall_menu_stats": {
+      "average_sustainability_score": 0.0,
+      "average_pleasure_score": 0.0,
+      "average_fit_score": 0.0,
+      "average_total_score": 0.0,
+      "total_dishes": 0,
+      "plant_based_percentage": 0.0,
+      "high_nova_percentage": 0.0
+    },
+    "restaurant_rankings": [],
+    "swap_suggestions": null,
+    "filter_info": {
+      "filtered_out_count": 12,
+      "compatible_dishes_found": 0,
+      "message": "\ud83d\udd0d 12 plats filtr\u00e9s selon vos pr\u00e9f\u00e9rences alimentaires"
+    }
+  },
+  "mode": "consumer"
+}

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant-Based Menu Scorer 🌱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+        }
+        
+        input[type="file"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .file-upload {
+            position: relative;
+            background: #f7fafc;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload:hover {
+            background: #edf2f7;
+            border-color: #667eea;
+        }
+        
+        .file-upload input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            margin-top: 40px;
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .dish-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .dish-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .dish-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .dish-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .dish-price {
+            font-size: 1.2em;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .dish-score {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .dish-comment {
+            color: #4a5568;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        
+        .sub-scores {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+        }
+        
+        .sub-score {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            background: #f7fafc;
+            border-radius: 6px;
+        }
+        
+        .sub-score-label {
+            font-size: 0.8em;
+            color: #718096;
+        }
+        
+        .sub-score-value {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .tag {
+            background: #e6fffa;
+            color: #047857;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        .tag.allergen {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Plant-Based Menu Scorer</h1>
+        <p class="subtitle">Upload a menu photo and discover vegetarian-friendly dishes</p>
+        
+        <form id="menuForm">
+            <div class="form-group">
+                <label>Menu Image</label>
+                <div class="file-upload" id="fileUpload">
+                    <input type="file" id="menuImage" accept="image/*" required>
+                    <div class="upload-icon">📸</div>
+                    <div>Click to upload menu image</div>
+                    <div style="font-size: 0.9em; color: #718096; margin-top: 8px;">
+                        JPG, PNG, or HEIC
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="restaurantName">Restaurant Name (Optional)</label>
+                <input type="text" id="restaurantName" placeholder="e.g., Green Garden Cafe">
+            </div>
+            
+            <div class="form-group">
+                <label for="diet">Dietary Preference</label>
+                <select id="diet">
+                    <option value="">Any</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="halal">Halal</option>
+                    <option value="gluten-free">Gluten-Free</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="allergens">Allergens (comma-separated)</label>
+                <input type="text" id="allergens" placeholder="e.g., gluten, nuts, soy">
+            </div>
+            
+            <button type="submit" id="submitBtn">
+                Analyze Menu
+            </button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Analyzing menu... This may take 30-60 seconds</div>
+        </div>
+        
+        <div class="error" id="error"></div>
+        
+        <div class="results" id="results">
+            <h2>Results</h2>
+            
+            <div class="stats" id="stats"></div>
+            
+            <h3>Top Recommended Dishes</h3>
+            <div id="dishes"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration - UPDATE THIS with your ngrok URL from deploy.py
+        const API_URL = 'http://localhost:8000'; // Change to ngrok URL when deployed
+        
+        const form = document.getElementById('menuForm');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const results = document.getElementById('results');
+        const submitBtn = document.getElementById('submitBtn');
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('menuImage');
+        
+        // File upload UI
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                fileUpload.querySelector('div:last-child').textContent = `Selected: ${file.name}`;
+            }
+        });
+        
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Reset UI
+            loading.classList.add('show');
+            error.classList.remove('show');
+            results.classList.remove('show');
+            submitBtn.disabled = true;
+            
+            try {
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                formData.append('restaurant_name', document.getElementById('restaurantName').value || 'Unknown Restaurant');
+                formData.append('dietary_restriction', document.getElementById('diet').value);
+                formData.append('allergens', document.getElementById('allergens').value);
+                formData.append('strict_filter', 'true');
+                formData.append('mode', 'consumer');
+                formData.append('top_n', '10');
+                
+                // Call API
+                const response = await fetch(`${API_URL}/api/full-pipeline`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    throw new Error('API returned unsuccessful response');
+                }
+                
+            } catch (err) {
+                error.textContent = `Error: ${err.message}. Make sure the API server is running!`;
+                error.classList.add('show');
+            } finally {
+                loading.classList.remove('show');
+                submitBtn.disabled = false;
+            }
+        });
+        
+        function displayResults(data) {
+            const { scoring, restaurant } = data;
+            const stats = scoring.overall_menu_stats;
+            const dishes = scoring.scored_dishes;
+            
+            // Display stats
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total_dishes}</div>
+                    <div class="stat-label">Total Dishes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.plant_based_percentage.toFixed(0)}%</div>
+                    <div class="stat-label">Plant-Based</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.average_sustainability_score.toFixed(1)}</div>
+                    <div class="stat-label">Avg Score</div>
+                </div>
+            `;
+            document.getElementById('stats').innerHTML = statsHTML;
+            
+            // Display dishes
+            const dishesHTML = dishes.slice(0, 10).map((dish, i) => `
+                <div class="dish-card">
+                    <div class="dish-header">
+                        <div>
+                            <div style="color: #718096; font-size: 0.9em; margin-bottom: 5px;">
+                                #${i + 1}
+                            </div>
+                            <div class="dish-name">${dish.name}</div>
+                        </div>
+                        <div class="dish-price">€${dish.price.toFixed(2)}</div>
+                    </div>
+                    
+                    <div class="dish-score">
+                        Score: ${dish.total_score.toFixed(1)}/10
+                    </div>
+                    
+                    <div class="dish-comment">${dish.comment}</div>
+                    
+                    <div class="sub-scores">
+                        <div class="sub-score">
+                            <div class="sub-score-label">🌍 Planet</div>
+                            <div class="sub-score-value">${dish.sub_scores.s_planet.toFixed(1)}</div>
+                        </div>
+                        <div class="sub-score">
+                            <div class="sub-score-label">😋 Pleasure</div>
+                            <div class="sub-score-value">${dish.sub_scores.s_pleasure.toFixed(1)}</div>
+                        </div>
+                        <div class="sub-score">
+                            <div class="sub-score-label">💪 Fit</div>
+                            <div class="sub-score-value">${dish.sub_scores.s_fit.toFixed(1)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tags">
+                        ${dish.enriched_attributes.dietary_tags.map(tag => 
+                            `<span class="tag">${tag}</span>`
+                        ).join('')}
+                        ${dish.enriched_attributes.allergens.slice(0, 3).map(allergen => 
+                            `<span class="tag allergen">⚠️ ${allergen}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('dishes').innerHTML = dishesHTML;
+            results.classList.add('show');
+        }
+    </script>
+</body>
+</html>

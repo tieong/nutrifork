@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import RestaurantModal from '../components/RestaurantModal'
-import { AllergiesPanel } from '../components/LiquidGlassPanels'
+import SettingsModal from '../components/SettingsModal'
+import PillNavbar from '../components/PillNavbar'
+import carroteGood from '../assets/carrote-good.svg'
+import carroteBad from '../assets/carrote-bad.svg'
 import { getMockDishesForRestaurant } from '../services/mockDishesService'
-import carrotGoodSvg from '../assets/carrot-good-optimized.svg?raw'
-import carrotBadSvg from '../assets/carrot-bad-optimized.svg?raw'
 
 // École 42 Paris - 96 Boulevard Bessières, 75017 Paris
 // Coordonnées exactes vérifiées sur Google Maps
@@ -39,126 +40,6 @@ const calculateVeggieScore = (restaurant) => {
 }
 
 // ============================================
-// HEADER COMPONENT WITH USER ACTIONS
-// ============================================
-function MapHeader({
-  allergiesCount,
-  restaurantsCount,
-  veggieCount,
-  isSearching,
-  isDarkMode,
-  onToggleTheme
-}) {
-  return (
-    <div className="absolute top-4 left-4 right-4 z-20 animate-slide-down flex justify-between items-start">
-      {/* Left side - Logo & Stats */}
-      <div className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-3 flex items-center gap-3`}>
-
-        {/* Logo */}
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-md shadow-emerald-500/25">
-            <span className="text-lg">🌱</span>
-          </div>
-          <div className="flex flex-col">
-            <span className={`font-bold text-base tracking-tight leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              NutriFork
-            </span>
-            <span className={`text-[9px] uppercase tracking-wider font-medium ${isDarkMode ? 'text-white/50' : 'text-gray-500'}`}>
-              Veggie Finder
-            </span>
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className={`w-px h-8 ${isDarkMode ? 'bg-white/20' : 'bg-gray-300'}`}></div>
-
-        {/* Stats */}
-        <div className="flex items-center gap-2">
-          {/* Veggie restaurants badge */}
-          {veggieCount > 0 && (
-            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border
-              ${isDarkMode 
-                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
-                : 'bg-emerald-100 text-emerald-700 border-emerald-200'
-              }`}
-            >
-              <span>🌱</span>
-              <span>{veggieCount} veggie</span>
-            </div>
-          )}
-          
-          {/* Allergies badge */}
-          {allergiesCount > 0 && (
-            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border
-              ${isDarkMode 
-                ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' 
-                : 'bg-amber-100 text-amber-800 border-amber-300'
-              }`}>
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <span>{allergiesCount}</span>
-            </div>
-          )}
-
-          {/* Restaurants count */}
-          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border
-            ${isDarkMode 
-              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
-              : 'bg-emerald-100 text-emerald-800 border-emerald-300'
-            }`}>
-            {isSearching ? (
-              <>
-                <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>...</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span>{restaurantsCount}</span>
-              </>
-            )}
-          </div>
-
-          {/* Distance indicator */}
-          <span className={`text-[10px] font-medium ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>&lt;1km</span>
-        </div>
-
-        {/* Divider */}
-        <div className={`w-px h-8 ${isDarkMode ? 'bg-white/20' : 'bg-gray-300'}`}></div>
-
-        {/* Theme Toggle */}
-        <button
-          onClick={onToggleTheme}
-          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300
-            ${isDarkMode 
-              ? 'bg-white/10 hover:bg-white/20 text-yellow-300' 
-              : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-            }`}
-          title={isDarkMode ? 'Light mode' : 'Dark mode'}
-        >
-          {isDarkMode ? (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          ) : (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-          )}
-        </button>
-      </div>
-    </div>
-  )
-}
-
-// ============================================
 // ANIMATED USER MARKER COMPONENT
 // ============================================
 function createUserMarker() {
@@ -182,30 +63,24 @@ function createRestaurantMarker(restaurant, index) {
   const veggieScore = restaurant.veggieScore || 0
   const isVeggie = restaurant.isVeggie || false
 
-  // Classes selon le score végé (0-100)
-  const markerClass = isVeggie ? 'veggie-marker' :
-    (veggieScore >= 50 ? 'rating-excellent' : veggieScore >= 25 ? 'rating-high' : 'rating-medium')
-
-  // Utiliser les SVG de carottes
-  const icon = isVeggie ? carrotGoodSvg : carrotBadSvg
+  // Utiliser la carotte appropriée selon le type de restaurant
+  const carroteSrc = isVeggie ? carroteGood : carroteBad
 
   const container = document.createElement('div')
-  container.className = 'marker-container'
+  container.className = 'carrote-marker-container'
   container.style.animationDelay = `${index * 60}ms`
 
   container.innerHTML = `
-    <div class="restaurant-marker ${markerClass}">
-      <div class="restaurant-marker-glow"></div>
-      <div class="restaurant-marker-inner">
-        <div class="restaurant-marker-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">${icon}</div>
+    <div class="carrote-marker ${isVeggie ? 'carrote-good' : 'carrote-bad'}" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+      <img src="${carroteSrc}" alt="${isVeggie ? 'Veggie restaurant' : 'Restaurant'}" class="carrote-icon" />
+      <div class="carrote-rating" style="display: flex !important; visibility: visible !important; opacity: 1 !important; position: relative !important;">
+        <svg viewBox="0 0 20 20" fill="currentColor" style="width: 11px; height: 11px; color: #fbbf24;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        <span style="font-size: 10px; font-weight: 700;">${veggieScore}%</span>
       </div>
-      <div class="restaurant-marker-rating">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-        <span>${veggieScore}%</span>
-      </div>
-      ${isVeggie ? '<div class="veggie-badge">PLANT</div>' : ''}
     </div>
   `
+
+  console.log('🔍 Marker created:', { veggieScore, isVeggie, restaurant: restaurant.name })
 
   return container
 }
@@ -218,6 +93,7 @@ function MapPage() {
   const [isSearching, setIsSearching] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [mapLoaded, setMapLoaded] = useState(false)
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem('nutrifork-theme')
     return saved ? saved === 'dark' : false // Light by default
@@ -259,16 +135,45 @@ function MapPage() {
     }
 
     const loadGooglePlaces = () => {
+      // Check if Google Maps is already fully loaded
       if (window.google?.maps?.importLibrary) {
         setIsLoaded(true)
         return
       }
 
+      // Check if script is already being loaded or exists
+      const existingScript = document.querySelector(
+        `script[src*="maps.googleapis.com/maps/api/js"]`
+      )
+
+      if (existingScript) {
+        // Script already exists, wait for it to load completely
+        const checkLoaded = () => {
+          if (window.google?.maps?.importLibrary) {
+            setIsLoaded(true)
+          } else {
+            setTimeout(checkLoaded, 100)
+          }
+        }
+        checkLoaded()
+        return
+      }
+
+      // Load script with callback - this is the recommended way to avoid async warnings
+      window.initMap = function() {
+        setIsLoaded(true)
+        delete window.initMap
+      }
+
       const script = document.createElement('script')
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&v=weekly`
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&loading=async&libraries=places&callback=initMap`
       script.async = true
       script.defer = true
-      script.onload = () => setIsLoaded(true)
+      script.onerror = () => {
+        console.error('Failed to load Google Maps API')
+        setIsLoaded(false)
+        delete window.initMap
+      }
       document.head.appendChild(script)
     }
 
@@ -279,10 +184,11 @@ function MapPage() {
   // PRIORITÉ : Restos vegan/veggietariens d'abord, puis les autres
   // STRATÉGIE : Faire plusieurs requêtes pour obtenir plus de 20 résultats
   const searchNearbyRestaurants = useCallback(async (location) => {
-    if (!isLoaded || !window.google) return
+    if (!isLoaded || !window.google?.maps?.importLibrary) return
 
     setIsSearching(true)
     try {
+      // Import the Places library
       const { Place, SearchNearbyRankPreference } = await window.google.maps.importLibrary('places')
 
       const baseRequest = {
@@ -573,9 +479,10 @@ function MapPage() {
         setSelectedRestaurant(restaurant)
       })
 
-      const marker = new maplibregl.Marker({ 
+      const marker = new maplibregl.Marker({
         element: el,
-        anchor: 'center'
+        anchor: 'center',
+        offset: [0, -10]
       })
         .setLngLat([restaurant.position.lng, restaurant.position.lat])
         .addTo(mapRef.current)
@@ -592,8 +499,8 @@ function MapPage() {
   // No API keys - show setup screen
   if (!JAWG_ACCESS_TOKEN || !GOOGLE_MAPS_API_KEY) {
     return (
-      <div className={`min-h-screen flex items-center justify-center p-4 ${isDarkMode ? 'bg-[#0a0f1a]' : 'bg-gray-100'}`}>
-        <div className={`max-w-2xl w-full rounded-3xl shadow-2xl p-8 text-center border ${isDarkMode ? 'bg-[#111827] border-white/5' : 'bg-white border-gray-200'}`}>
+      <div className={`min-h-screen flex items-center justify-center p-4 ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-[#141414]'}`}>
+        <div className={`max-w-2xl w-full rounded-3xl shadow-2xl p-8 text-center border ${isDarkMode ? 'bg-[#0a0a0a] border-brand-gold/20' : 'bg-[#141414] border-brand-gold/25'}`}>
           <div className="text-6xl mb-4">🗺️</div>
           <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
             Configuration required
@@ -607,7 +514,7 @@ function MapPage() {
   }
 
   return (
-    <div className={`relative w-full h-screen overflow-hidden ${isDarkMode ? 'bg-[#0a0f1a]' : 'bg-gray-100'}`}>
+    <div className={`relative w-full h-screen overflow-hidden ${isDarkMode ? 'bg-[#0a0a0a] dark-theme' : 'bg-[#141414] light-theme'}`}>
       {/* Dark mode overlays */}
       {isDarkMode && (
         <>
@@ -617,47 +524,20 @@ function MapPage() {
         </>
       )}
 
-      {/* Header with theme toggle */}
-      <MapHeader
-        allergiesCount={userAllergies.length}
-        restaurantsCount={restaurants.length}
-        veggieCount={restaurants.filter(r => r.isVeggie).length}
-        isSearching={isSearching}
+      {/* Pill Navbar */}
+      <PillNavbar
         isDarkMode={isDarkMode}
         onToggleTheme={handleToggleTheme}
+        onSettings={() => setShowSettingsModal(prev => !prev)}
+        allergiesCount={userAllergies.length}
       />
 
       {/* MapLibre Map */}
-      <div 
-        ref={mapContainerRef} 
+      <div
+        ref={mapContainerRef}
         className="w-full h-full"
-        style={{ background: isDarkMode ? '#0a0f1a' : '#f1f5f9' }}
+        style={{ background: isDarkMode ? '#0a0a0a' : '#141414' }}
       />
-
-      {/* Liquid Glass Panel */}
-      <AllergiesPanel
-        allergies={userAllergies}
-        onAllergiesUpdate={handleAllergiesUpdate}
-        isDarkMode={isDarkMode}
-      />
-
-      {/* Restaurant count floating badge */}
-      {!isSearching && restaurants.length > 0 && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-fade-up">
-          <div className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-2 flex items-center gap-3`}>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className={`text-sm font-medium ${isDarkMode ? 'text-white/80' : 'text-gray-800'}`}>
-                {restaurants.filter(r => r.isVeggie).length} veggie
-              </span>
-            </div>
-            <div className={`w-px h-4 ${isDarkMode ? 'bg-white/20' : 'bg-gray-300'}`}></div>
-            <span className={`text-sm ${isDarkMode ? 'text-white/50' : 'text-gray-500'}`}>
-              {restaurants.length} restaurants nearby
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* Restaurant modal */}
       {selectedRestaurant && (
@@ -668,6 +548,15 @@ function MapPage() {
           isDarkMode={isDarkMode}
         />
       )}
+
+      {/* Settings modal */}
+      <SettingsModal
+        isOpen={showSettingsModal}
+        userAllergies={userAllergies}
+        onAllergiesUpdate={handleAllergiesUpdate}
+        onClose={() => setShowSettingsModal(false)}
+        isDarkMode={isDarkMode}
+      />
     </div>
   )
 }

@@ -6,12 +6,15 @@
    NUTRIFORK - Dual Theme Support
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --color-primary: #10b981;
-  --color-primary-light: #34d399;
-  --color-user: #f43f5e;
+  --color-primary: #f9b60d;
+  --color-primary-light: #fcd34d;
+  --color-secondary: #ff7f00;
+  --color-black: #0a0a0a;
+  --color-near-black: #141414;
+  --color-user: #ff7f00;
 }
 
 * {
@@ -20,9 +23,63 @@
 
 body {
   margin: 0;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  letter-spacing: -0.01em;
+}
+
+/* Typographie optimisée pour NutriFork */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+button, input, select, textarea {
+  font-family: 'Inter', sans-serif;
+}
+
+/* ============================================
+   NAVBAR & UI ELEMENTS MODERN STYLES
+   ============================================ */
+
+/* Amélioration du rendu des textes */
+.navbar-text {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Style pour les badges avec design minimaliste */
+.badge-modern {
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.badge-modern:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Style pour les boutons avec effet moderne */
+.button-modern {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-modern:hover {
+  transform: translateY(-2px);
+}
+
+.button-modern:active {
+  transform: translateY(0);
 }
 
 /* ============================================
@@ -54,47 +111,38 @@ body {
   50% { opacity: 0.8; transform: scale(1.1); }
 }
 
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(249, 182, 13, 0.6);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 20px rgba(249, 182, 13, 0.9);
+  }
+}
+
+@keyframes pill-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.pill-nav-container {
+  animation: pill-pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 .animate-slide-down {
   animation: slide-down 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .animate-fade-up {
   animation: fade-up 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-/* ============================================
-   HEADER - DARK MODE
-   ============================================ */
-
-.header-dark {
-  background: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-}
-
-/* ============================================
-   HEADER - LIGHT MODE
-   ============================================ */
-
-.header-light {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* ============================================
-   HEADER GLASS BASE
-   ============================================ */
-
-.header-glass {
-  border-radius: 16px;
-  transition: all 0.3s ease;
 }
 
 /* ============================================
@@ -136,12 +184,12 @@ body {
   transform: translate(-50%, -50%);
   width: 18px;
   height: 18px;
-  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  background: linear-gradient(135deg, #ff7f00 0%, #cc6600 100%);
   border-radius: 50%;
   border: 3px solid white;
-  box-shadow: 
-    0 0 0 2px rgba(244, 63, 94, 0.3),
-    0 0 16px rgba(244, 63, 94, 0.4),
+  box-shadow:
+    0 0 0 2px rgba(255, 127, 0, 0.3),
+    0 0 16px rgba(255, 127, 0, 0.5),
     0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 3;
 }
@@ -153,7 +201,7 @@ body {
   transform: translate(-50%, -50%);
   width: 18px;
   height: 18px;
-  background: rgba(244, 63, 94, 0.4);
+  background: rgba(255, 127, 0, 0.4);
   border-radius: 50%;
   animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -176,7 +224,18 @@ body {
 }
 
 .restaurant-marker-glow {
-  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(249, 182, 13, 0.5);
+  filter: blur(12px);
+  opacity: 0.5;
+  transition: all 0.3s ease;
+  animation: glow-pulse 3s ease-in-out infinite;
 }
 
 .restaurant-marker:hover .restaurant-marker-glow {
@@ -190,16 +249,22 @@ body {
   transform: translate(-50%, -50%);
   width: 44px;
   height: 44px;
-  background: transparent;
-  border: none;
+  background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
+  border-radius: 50%;
+  border: 3px solid white;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow:
+    0 2px 12px rgba(249, 182, 13, 0.5),
+    0 4px 16px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
 }
 
 .restaurant-marker:hover .restaurant-marker-inner {
-  /* No box-shadow on hover */
+  box-shadow:
+    0 4px 20px rgba(249, 182, 13, 0.7),
+    0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .restaurant-marker-icon {
@@ -242,61 +307,173 @@ body {
 
 /* Rating color variants */
 .restaurant-marker.rating-excellent .restaurant-marker-glow {
-  background: rgba(34, 197, 94, 0.5);
+  background: rgba(249, 182, 13, 0.6);
 }
 
 .restaurant-marker.rating-excellent .restaurant-marker-inner {
-  background: transparent;
+  background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
 }
 
 .restaurant-marker.rating-high .restaurant-marker-glow {
-  background: rgba(16, 185, 129, 0.5);
+  background: rgba(249, 182, 13, 0.5);
 }
 
 .restaurant-marker.rating-medium .restaurant-marker-glow {
-  background: rgba(245, 158, 11, 0.4);
+  background: rgba(255, 127, 0, 0.4);
 }
 
 .restaurant-marker.rating-medium .restaurant-marker-inner {
-  background: transparent;
+  background: linear-gradient(135deg, #ff7f00 0%, #cc6600 100%);
 }
 
 /* ============================================
-   VEGGIE MARKER STYLES
+   VEGGIE MARKER STYLES (Premium Gold/Orange)
    ============================================ */
 
 .restaurant-marker.veggie-marker .restaurant-marker-glow {
-  background: rgba(34, 197, 94, 0.6);
+  background: rgba(249, 182, 13, 0.7);
   animation: veggie-pulse 2s ease-in-out infinite;
 }
 
 .restaurant-marker.veggie-marker .restaurant-marker-inner {
-  background: transparent;
+  background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
+  box-shadow: 0 0 20px rgba(249, 182, 13, 0.6);
 }
 
 .restaurant-marker.veggie-marker .restaurant-marker-rating {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
     color: white;
 }
 
 .veggie-badge {
-  display: none;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
+  color: white;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(249, 182, 13, 0.5);
+  letter-spacing: 0.5px;
+  z-index: 10;
 }
 
 @keyframes veggie-pulse {
-  0%, 100% { 
+  0%, 100% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0.6;
   }
-  50% { 
+  50% {
     transform: translate(-50%, -50%) scale(1.3);
     opacity: 0.3;
   }
 }
 
 /* ============================================
+   CARROTE MARKERS (Modern & Minimalist)
+   ============================================ */
+
+.carrote-marker-container {
+  animation: marker-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.carrote-marker {
+  position: relative;
+  width: 48px;
+  height: 60px;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.carrote-marker:hover {
+  transform: scale(1.2) translateY(-6px);
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
+  z-index: 100 !important;
+}
+
+.carrote-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+/* Effet de glow subtil sur hover pour les carottes good */
+.carrote-marker.carrote-good:hover .carrote-icon {
+  filter: brightness(1.1) drop-shadow(0 0 12px rgba(249, 182, 13, 0.6));
+}
+
+/* Effet plus subtil pour les carottes bad */
+.carrote-marker.carrote-bad:hover .carrote-icon {
+  filter: brightness(1.05) drop-shadow(0 0 8px rgba(100, 100, 100, 0.4));
+}
+
+.carrote-rating {
+  position: relative !important;
+  background: white;
+  color: #111;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 10px;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    0 0 0 2px rgba(255, 255, 255, 0.8);
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  align-items: center;
+  gap: 2px;
+  z-index: 10;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.carrote-marker:hover .carrote-rating {
+  transform: scale(1.15);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 0 0 2px rgba(255, 255, 255, 1);
+}
+
+.carrote-rating svg {
+  width: 11px;
+  height: 11px;
+  color: #fbbf24;
+}
+
+/* Style doré pour les restos veggie */
+.carrote-marker.carrote-good .carrote-rating {
+  background: linear-gradient(135deg, #f9b60d 0%, #ff7f00 100%);
+  color: white;
+  box-shadow:
+    0 2px 8px rgba(249, 182, 13, 0.4),
+    0 0 0 2px rgba(249, 182, 13, 0.2);
+}
+
+.carrote-marker.carrote-good:hover .carrote-rating {
+  box-shadow:
+    0 4px 12px rgba(249, 182, 13, 0.6),
+    0 0 20px rgba(249, 182, 13, 0.3);
+}
+
+/* ============================================
    MAPLIBRE OVERRIDES
    ============================================ */
+
+.maplibregl-marker {
+  /* Force l'affichage de tous les enfants du marker */
+  overflow: visible !important;
+}
 
 .maplibregl-map {
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -372,776 +549,436 @@ body {
 }
 
 /* ============================================
-   LIQUID GLASS PANELS
+   MODERN NAVBAR & FOOTER STYLES
    ============================================ */
 
-.liquid-glass-panel {
-  position: absolute;
-  z-index: 25;
-  cursor: pointer;
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  overflow: hidden;
+/* Assure que le contenu principal ne soit pas caché sous la navbar et le footer */
+.map-container-with-nav {
+  padding-top: 64px; /* Height of navbar */
+  padding-bottom: 68px; /* Height of footer */
+  height: 100vh;
 }
 
-.liquid-glass-panel.allergies-panel {
-  left: 20px;
-  bottom: 24px;
+/* Animation d'apparition pour navbar et footer */
+@keyframes slide-in-top {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.liquid-glass-panel.ranking-panel {
-  right: 20px;
-  bottom: 100px;
+@keyframes slide-in-bottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-/* Collapsed state */
-.liquid-glass-panel.collapsed {
-  width: 140px;
-  height: 52px;
-  border-radius: 26px;
+nav {
+  animation: slide-in-top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Expanded state */
-.liquid-glass-panel.expanded {
-  width: 280px;
-  border-radius: 24px;
-  cursor: default;
+footer {
+  animation: slide-in-bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.liquid-glass-panel.expanded.allergies-panel {
-  height: auto;
-  min-height: 200px;
-  max-height: 320px;
-}
-
-.liquid-glass-panel.expanded.ranking-panel {
-  height: auto;
-  min-height: 240px;
-  max-height: 400px;
-}
-
-/* Glass background effect */
-.liquid-glass-bg {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  overflow: hidden;
-}
-
-/* Light mode glass */
-.liquid-glass-panel.light .liquid-glass-bg {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
-    0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* Dark mode glass */
-.liquid-glass-panel.dark .liquid-glass-bg {
-  background: rgba(17, 24, 39, 0.75);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-}
-
-/* Animated liquid blobs */
-.liquid-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(30px);
-  opacity: 0.5;
-  animation: blob-float 8s ease-in-out infinite;
-}
-
-.liquid-glass-panel.allergies-panel .liquid-blob.blob-1 {
-  width: 80px;
-  height: 80px;
-  top: -20px;
-  left: -20px;
-  background: rgba(251, 191, 36, 0.4);
-  animation-delay: 0s;
-}
-
-.liquid-glass-panel.allergies-panel .liquid-blob.blob-2 {
-  width: 60px;
-  height: 60px;
-  bottom: -10px;
-  right: -10px;
-  background: rgba(239, 68, 68, 0.3);
-  animation-delay: -4s;
-}
-
-.liquid-glass-panel.ranking-panel .liquid-blob.blob-1 {
-  width: 80px;
-  height: 80px;
-  top: -20px;
-  right: -20px;
-  background: rgba(16, 185, 129, 0.4);
-  animation-delay: -2s;
-}
-
-.liquid-glass-panel.ranking-panel .liquid-blob.blob-2 {
-  width: 60px;
-  height: 60px;
-  bottom: -10px;
-  left: -10px;
-  background: rgba(59, 130, 246, 0.3);
-  animation-delay: -6s;
-}
-
-@keyframes blob-float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(10px, -10px) scale(1.1); }
-  50% { transform: translate(-5px, 5px) scale(0.95); }
-  75% { transform: translate(-10px, -5px) scale(1.05); }
-}
-
-/* Shimmer effect */
-.liquid-shimmer {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    transparent 100%
-  );
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% { left: -100%; }
-  50%, 100% { left: 100%; }
-}
-
-/* Content container */
-.liquid-glass-content {
+/* Effet hover moderne pour les liens du footer */
+footer a {
   position: relative;
-  z-index: 2;
-  height: 100%;
-  padding: 12px 16px;
 }
 
-/* Collapsed content */
-.collapsed-content {
+footer a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+
+footer a:hover::after {
+  width: 100%;
+}
+
+/* ============================================
+   PILL NAVIGATION & FOOTER STYLES
+   ============================================ */
+
+.pill-nav-container {
+  position: fixed;
+  top: 1.5rem;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 100vw;
+  padding: 0 1rem;
+}
+
+@media (max-width: 768px) {
+  .pill-nav-container {
+    width: calc(100% - 2rem);
+    max-width: calc(100% - 2rem);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    top: 1rem;
+  }
+}
+
+.pill-nav {
+  --nav-h: 48px;
+  --pill-pad-x: 20px;
+  --pill-gap: 4px;
+  width: max-content;
   display: flex;
   align-items: center;
-  gap: 8px;
-  height: 100%;
+  box-sizing: border-box;
+  pointer-events: auto;
+  margin: 0 auto;
 }
 
-.panel-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
+@media (max-width: 768px) {
+  .pill-nav {
+    width: 100%;
+    justify-content: space-between;
+    background: transparent;
+    gap: 8px;
+  }
+  
+  .pill-nav-items {
+    padding: 3px;
+    gap: 3px;
+  }
+}
+
+.pill-nav-items {
+  position: relative;
   display: flex;
+  align-items: center;
+  height: var(--nav-h);
+  background: #ffffff;
+  border-radius: 9999px;
+  padding: 4px;
+  gap: var(--pill-gap);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  pointer-events: auto;
+}
+
+.pill-logo {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: transparent;
+  padding: 10px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  box-shadow: none;
+  transition: transform 0.3s ease;
   flex-shrink: 0;
+  margin-right: 8px;
+  pointer-events: auto;
 }
 
-.panel-icon svg {
-  width: 16px;
-  height: 16px;
+.pill-logo:hover {
+  transform: scale(1.1);
 }
 
-.liquid-glass-panel.light .allergies-icon {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: white;
-  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+.pill-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
-.liquid-glass-panel.dark .allergies-icon {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: white;
-  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+.pill-brand {
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+  border-right: 1px solid var(--pill-bg, #fff);
+  margin-right: 8px;
 }
 
-.liquid-glass-panel.light .ranking-icon {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+@media (max-width: 992px) {
+  .pill-brand {
+    padding: 0 10px;
+    margin-right: 6px;
+  }
 }
 
-.liquid-glass-panel.dark .ranking-icon {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+@media (max-width: 768px) {
+  .pill-brand {
+    display: none;
+  }
 }
 
-.panel-count {
-  font-size: 18px;
+.brand-name {
+  font-size: 14px;
   font-weight: 700;
+  color: #000;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 992px) {
+  .brand-name {
+    font-size: 12px;
+  }
+}
+
+.brand-tagline {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--pill-bg, #fff);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   line-height: 1;
 }
 
-.liquid-glass-panel.light .panel-count {
-  color: #111827;
+@media (max-width: 992px) {
+  .brand-tagline {
+    font-size: 8px;
+  }
 }
 
-.liquid-glass-panel.dark .panel-count {
-  color: #ffffff;
-}
-
-.panel-label {
-  font-size: 11px;
-  font-weight: 500;
-  opacity: 0.6;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.liquid-glass-panel.light .panel-label {
-  color: #374151;
-}
-
-.liquid-glass-panel.dark .panel-label {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.expand-hint {
-  margin-left: auto;
-  opacity: 0.4;
-  transition: all 0.3s ease;
-}
-
-.expand-hint svg {
-  width: 16px;
-  height: 16px;
-}
-
-.liquid-glass-panel.light .expand-hint {
-  color: #374151;
-}
-
-.liquid-glass-panel.dark .expand-hint {
-  color: white;
-}
-
-.liquid-glass-panel:hover .expand-hint {
-  opacity: 0.8;
-  transform: translateY(2px);
-}
-
-/* Expanded content */
-.expanded-content {
+.pill-list {
+  list-style: none;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  animation: content-fade-in 0.4s ease-out forwards;
+  align-items: stretch;
+  gap: var(--pill-gap);
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
-@keyframes content-fade-in {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-.panel-header {
+.pill-list > li {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  height: 100%;
 }
 
-.header-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.liquid-glass-panel.light .header-title {
-  color: #111827;
-}
-
-.liquid-glass-panel.dark .header-title {
-  color: white;
-}
-
-.close-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  display: flex;
+.pill {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.close-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
-.liquid-glass-panel.light .close-btn {
-  background: rgba(0, 0, 0, 0.05);
-  color: #374151;
-}
-
-.liquid-glass-panel.light .close-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.liquid-glass-panel.dark .close-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.liquid-glass-panel.dark .close-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* Allergies list */
-.allergies-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  max-height: 160px;
-  overflow-y: auto;
-  padding: 4px 0;
-}
-
-.allergy-tag {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  animation: tag-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-@keyframes tag-pop {
-  0% { opacity: 0; transform: scale(0.8); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-.liquid-glass-panel.light .allergy-tag {
-  background: rgba(251, 191, 36, 0.15);
-  color: #92400e;
-  border: 1px solid rgba(251, 191, 36, 0.3);
-}
-
-.liquid-glass-panel.dark .allergy-tag {
-  background: rgba(251, 191, 36, 0.2);
-  color: #fcd34d;
-  border: 1px solid rgba(251, 191, 36, 0.3);
-}
-
-.allergy-icon {
-  font-size: 14px;
-}
-
-.allergy-name {
-  font-size: 11px;
-}
-
-/* Edit button */
-.edit-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: none;
-  font-size: 12px;
+  height: 100%;
+  padding: 0 var(--pill-pad-x);
+  background: var(--pill-bg, #fff);
+  color: var(--pill-text, var(--base, #000));
+  text-decoration: none;
+  border-radius: 9999px;
+  box-sizing: border-box;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 4px;
-}
-
-.edit-btn svg {
-  width: 14px;
-  height: 14px;
-}
-
-.liquid-glass-panel.light .edit-btn {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: white;
-  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
-}
-
-.liquid-glass-panel.light .edit-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
-}
-
-.liquid-glass-panel.dark .edit-btn {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: white;
-  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
-}
-
-.liquid-glass-panel.dark .edit-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
-}
-
-/* Allergies edit grid */
-.allergies-edit-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-  max-height: 200px;
-  overflow-y: auto;
-  padding: 4px 0;
-}
-
-.allergy-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 10px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 500;
-  cursor: pointer;
-  border: 1.5px solid transparent;
-  transition: all 0.2s ease;
-  position: relative;
-  animation: checkbox-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  opacity: 0;
-  transform: scale(0.9);
-}
-
-@keyframes checkbox-pop {
-  0% { opacity: 0; transform: scale(0.9); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-.liquid-glass-panel.light .allergy-checkbox {
-  background: rgba(0, 0, 0, 0.03);
-  color: #374151;
-  border-color: transparent;
-}
-
-.liquid-glass-panel.light .allergy-checkbox:hover {
-  background: rgba(0, 0, 0, 0.06);
-  border-color: rgba(251, 191, 36, 0.3);
-}
-
-.liquid-glass-panel.light .allergy-checkbox.selected {
-  background: rgba(251, 191, 36, 0.15);
-  color: #92400e;
-  border-color: rgba(251, 191, 36, 0.5);
-}
-
-.liquid-glass-panel.dark .allergy-checkbox {
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.7);
-  border-color: transparent;
-}
-
-.liquid-glass-panel.dark .allergy-checkbox:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(251, 191, 36, 0.3);
-}
-
-.liquid-glass-panel.dark .allergy-checkbox.selected {
-  background: rgba(251, 191, 36, 0.2);
-  color: #fcd34d;
-  border-color: rgba(251, 191, 36, 0.5);
-}
-
-.allergy-checkbox .check-icon {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 12px;
-  height: 12px;
-  color: #f59e0b;
-}
-
-/* Edit actions */
-.edit-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.cancel-btn,
-.save-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: none;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.cancel-btn svg,
-.save-btn svg {
-  width: 14px;
-  height: 14px;
-}
-
-.liquid-glass-panel.light .cancel-btn {
-  background: rgba(0, 0, 0, 0.05);
-  color: #374151;
-}
-
-.liquid-glass-panel.light .cancel-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.liquid-glass-panel.dark .cancel-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.liquid-glass-panel.dark .cancel-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.liquid-glass-panel.light .save-btn {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-}
-
-.liquid-glass-panel.light .save-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-}
-
-.liquid-glass-panel.dark .save-btn {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
-}
-
-.liquid-glass-panel.dark .save-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-/* Ranking list */
-.ranking-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 280px;
-  overflow-y: auto;
-  padding: 4px 0;
-}
-
-.ranking-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  animation: item-slide 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  opacity: 0;
-  transform: translateX(-20px);
-}
-
-@keyframes item-slide {
-  0% { opacity: 0; transform: translateX(-20px); }
-  100% { opacity: 1; transform: translateX(0); }
-}
-
-.liquid-glass-panel.light .ranking-item {
-  background: rgba(0, 0, 0, 0.03);
-}
-
-.liquid-glass-panel.light .ranking-item:hover {
-  background: rgba(16, 185, 129, 0.1);
-}
-
-.liquid-glass-panel.dark .ranking-item {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.liquid-glass-panel.dark .ranking-item:hover {
-  background: rgba(16, 185, 129, 0.15);
-}
-
-.rank-badge {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 14px;
-}
-
-.rank-badge .medal {
-  font-size: 16px;
-}
-
-.rank-badge .rank-num {
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.liquid-glass-panel.light .rank-badge .rank-num {
-  color: #6b7280;
-}
-
-.liquid-glass-panel.dark .rank-badge .rank-num {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.restaurant-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.restaurant-name {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 18px;
+  line-height: 0;
   white-space: nowrap;
+  cursor: pointer;
+  position: relative;
   overflow: hidden;
-  text-overflow: ellipsis;
+  border: none;
+  transition: transform 0.2s ease;
 }
 
-.liquid-glass-panel.light .restaurant-name {
-  color: #111827;
+@media (max-width: 768px) {
+  .pill {
+    font-size: 20px;
+    padding: 0 14px;
+  }
 }
 
-.liquid-glass-panel.dark .restaurant-name {
+.pill:active {
+  transform: scale(0.95);
+}
+
+.pill-small {
+  font-size: 13px;
+  padding: 0 14px;
+  font-weight: 500;
+}
+
+.pill .hover-circle {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  border-radius: 50%;
+  background: var(--base, #000);
+  z-index: 1;
+  display: block;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.pill .label-stack {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  z-index: 2;
+}
+
+.pill .pill-label {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  line-height: 1;
+  will-change: transform;
+}
+
+.pill .pill-label-hover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--hover-text, #fff);
+  z-index: 3;
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.pill-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  background: #ff7f00;
   color: white;
-}
-
-.restaurant-type {
-  font-size: 10px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 4px;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(255, 127, 0, 0.4);
+}
+
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+}
+
+.mobile-menu-button {
+  width: var(--nav-h);
+  height: var(--nav-h);
+  border-radius: 50%;
+  background: var(--pill-bg, #ff7f00);
+  border: none;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  flex-shrink: 0;
+  pointer-events: auto;
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-button {
+    display: flex;
+  }
+}
+
+.hamburger-line {
+  width: 18px;
+  height: 2px;
+  background: var(--pill-text, #fff);
+  border-radius: 2px;
+  transition: all 0.01s ease;
+  transform-origin: center;
+}
+
+.mobile-menu-popover {
+  position: fixed;
+  top: 5rem;
+  left: 1rem;
+  right: 1rem;
+  background: var(--base, #000);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  z-index: 998;
+  opacity: 0;
+  transform-origin: top center;
+  visibility: hidden;
+  pointer-events: auto;
+}
+
+.mobile-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
 }
 
-.liquid-glass-panel.light .restaurant-type {
-  color: #6b7280;
+.mobile-menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 18px;
+  color: var(--pill-text, #fff);
+  background-color: var(--pill-bg, #fff);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 18px;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
 }
 
-.liquid-glass-panel.dark .restaurant-type {
-  color: rgba(255, 255, 255, 0.5);
+.mobile-menu-link:hover {
+  background-color: var(--base);
+  color: var(--hover-text, #fff);
+  transform: translateX(4px);
 }
 
-.veggie-badge {
-  font-size: 10px;
-}
-
-.score-badge {
-  width: 50px;
-  height: 24px;
-  border-radius: 12px;
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.liquid-glass-panel.light .score-badge {
-  background: rgba(16, 185, 129, 0.1);
-}
-
-.liquid-glass-panel.dark .score-badge {
-  background: rgba(16, 185, 129, 0.15);
-}
-
-.score-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: linear-gradient(90deg, #10b981, #34d399);
-  border-radius: 12px;
-  transition: width 0.5s ease;
-}
-
-.score-text {
-  position: absolute;
-  inset: 0;
+.mobile-badge {
+  min-width: 22px;
+  height: 22px;
+  background: #ff7f00;
+  color: white;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
-  color: white;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  z-index: 1;
-}
-
-/* Empty state */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 20px;
-  text-align: center;
-}
-
-.empty-icon {
-  font-size: 24px;
-}
-
-.liquid-glass-panel.light .empty-state {
-  color: #6b7280;
-}
-
-.liquid-glass-panel.dark .empty-state {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-/* Animation when toggling */
-.liquid-glass-panel.animating {
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.liquid-glass-panel.animating .liquid-glass-bg {
-  animation: glass-morph 0.5s ease-out;
-}
-
-@keyframes glass-morph {
-  0% { filter: blur(0px); }
-  50% { filter: blur(4px); }
-  100% { filter: blur(0px); }
-}
-
-/* Hover effect on collapsed */
-.liquid-glass-panel.collapsed:hover {
-  transform: translateY(-2px);
-}
-
-.liquid-glass-panel.collapsed:hover .liquid-glass-bg {
-  box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.6) inset;
-}
-
-.liquid-glass-panel.dark.collapsed:hover .liquid-glass-bg {
-  box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  padding: 0 6px;
 }
