@@ -641,10 +641,6 @@ function AllergiesPage({ user, setUser }) {
                 </span>
               </button>
             </div>
-
-            <p className="footer-note">
-              No allergies? Continue to discover all veggie dishes 🌿
-            </p>
           </div>
 
           {/* Profile Modal */}
