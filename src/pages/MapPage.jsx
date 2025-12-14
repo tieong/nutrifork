@@ -354,7 +354,7 @@ function MapPage({ user, setUser }) {
         fields: ['displayName', 'location', 'formattedAddress', 'rating', 'types', 'businessStatus', 'primaryType'],
         locationRestriction: {
           center: location,
-          radius: 1000, // 1km pour des résultats plus proches
+          radius: 2500, // 2.5km pour avoir plus de restos végé
         },
         maxResultCount: 20,
         rankPreference: SearchNearbyRankPreference.DISTANCE, // Trier par distance, pas popularité
@@ -368,7 +368,7 @@ function MapPage({ user, setUser }) {
         {
           request: {
             ...baseRequest,
-            maxResultCount: 10,
+            maxResultCount: 20,
             includedPrimaryTypes: ['vegan_restaurant']
           },
           label: '🌿 Vegan'
@@ -377,7 +377,7 @@ function MapPage({ user, setUser }) {
         {
           request: {
             ...baseRequest,
-            maxResultCount: 10,
+            maxResultCount: 20,
             includedPrimaryTypes: ['vegetarian_restaurant']
           },
           label: '🌱 Vegetarian'
