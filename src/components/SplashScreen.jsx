@@ -10,11 +10,9 @@ const SplashScreen = ({ onComplete }) => {
   const particlesRef = useRef([])
 
   useEffect(() => {
-    // Check for reduced motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     if (prefersReducedMotion) {
-      // Skip animation, show briefly then exit
       const timeout = setTimeout(() => {
         setIsVisible(false)
         onComplete?.()
@@ -22,7 +20,6 @@ const SplashScreen = ({ onComplete }) => {
       return () => clearTimeout(timeout)
     }
 
-    // Dynamic Netflix-style animation sequence with energy
     const tl = gsap.timeline({
       onComplete: () => {
         setIsVisible(false)
@@ -30,7 +27,6 @@ const SplashScreen = ({ onComplete }) => {
       }
     })
 
-    // Phase 1: Dynamic Appear (500ms) - avec rotation et bounce
     tl.fromTo(
       logoRef.current,
       {
@@ -87,7 +83,7 @@ const SplashScreen = ({ onComplete }) => {
       )
     })
 
-    // Phase 2: Hold with subtle pulse (700ms)
+
     tl.to(
       logoRef.current,
       {
@@ -112,7 +108,6 @@ const SplashScreen = ({ onComplete }) => {
       '<'
     )
 
-    // Phase 3: Dynamic Exit (600ms) - rotation et dispersion
     tl.to(
       logoRef.current,
       {
@@ -136,7 +131,6 @@ const SplashScreen = ({ onComplete }) => {
       '<'
     )
 
-    // Particles fade and disperse
     particlesRef.current.forEach((particle, i) => {
       tl.to(
         particle,

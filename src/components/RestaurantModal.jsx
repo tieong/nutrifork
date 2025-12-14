@@ -3,7 +3,6 @@ import { getMockDishesWithDelay } from '../services/mockDishesService'
 import carrotGoodSvg from '../assets/carrot-good-optimized.svg?raw'
 import carrotBadSvg from '../assets/carrot-bad-optimized.svg?raw'
 
-// Set to true to use mock dishes, false to use Perplexity API
 const USE_MOCK_DISHES = true
 
 function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true }) {
@@ -14,7 +13,6 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
   useEffect(() => {
     if (!restaurant) return
 
-    // Si les plats sont déjà chargés, les utiliser
     if (restaurant.dishes && restaurant.dishes.length > 0) {
       setDishes(restaurant.dishes)
       return
@@ -26,11 +24,9 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
 
       try {
         if (USE_MOCK_DISHES) {
-          // Utiliser les plats mock avec les allergies de l'utilisateur
           const mockDishes = await getMockDishesWithDelay(restaurant, 600, userAllergies)
           setDishes(mockDishes)
         } else {
-          // Utiliser Perplexity (quand on aura l'API)
           const { fetchRestaurantMenu } = await import('../services/perplexityService')
           const menuData = await fetchRestaurantMenu(restaurant.name, restaurant.address)
           if (menuData && menuData.dishes) {

@@ -3,13 +3,6 @@ import { useState } from 'react'
 import MapPage from './pages/MapPage'
 import SplashScreen from './components/SplashScreen'
 
-// ============================================
-// APP - Simplifié pour la démo
-// ============================================
-// Flow: Arrivée directe sur la map
-// Allergies gérées via le bouton settings (localStorage)
-// ============================================
-
 function App() {
   const [showSplash, setShowSplash] = useState(true)
 
@@ -24,11 +17,7 @@ function App() {
         }}
       >
         <Routes>
-          {/* Route principale - Map directe */}
-          <Route
-            path="/"
-            element={<MapPage />}
-          />
+          <Route path="/" element={<MapPage />} />
         </Routes>
       </Router>
     </>

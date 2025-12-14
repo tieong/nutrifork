@@ -8,8 +8,6 @@ import carroteGood from '../assets/carrote-good.svg'
 import carroteBad from '../assets/carrote-bad.svg'
 import { getMockDishesForRestaurant } from '../services/mockDishesService'
 
-// École 42 Paris - 96 Boulevard Bessières, 75017 Paris
-// Coordonnées exactes vérifiées sur Google Maps
 const defaultCenter = {
   lat: 48.8965,
   lng: 2.3183
@@ -39,9 +37,6 @@ const calculateVeggieScore = (restaurant) => {
   return Math.round((veggieCount / dishes.length) * 100)
 }
 
-// ============================================
-// ANIMATED USER MARKER COMPONENT
-// ============================================
 function createUserMarker() {
   const container = document.createElement('div')
   container.className = 'marker-container'
@@ -56,14 +51,9 @@ function createUserMarker() {
   return container
 }
 
-// ============================================
-// ANIMATED RESTAURANT MARKER COMPONENT
-// ============================================
 function createRestaurantMarker(restaurant, index) {
   const veggieScore = restaurant.veggieScore || 0
   const isVeggie = restaurant.isVeggie || false
-
-  // Utiliser la carotte appropriée selon le type de restaurant
   const carroteSrc = isVeggie ? carroteGood : carroteBad
 
   const container = document.createElement('div')
