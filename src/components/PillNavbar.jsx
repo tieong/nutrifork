@@ -238,7 +238,7 @@ const PillNavbar = ({
 
         <div className="pill-nav-items desktop-only" ref={navItemsRef}>
           <div className="pill-brand">
-            <span className="brand-name">Louvy</span>
+            <span className="brand-name">Nutrifork</span>
           </div>
           
           <ul className="pill-list" role="menubar">
