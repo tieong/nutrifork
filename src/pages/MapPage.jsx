@@ -642,10 +642,16 @@ function MapPage({ user, setUser }) {
       {/* Restaurant count floating badge */}
       {!isSearching && restaurants.length > 0 && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-fade-up">
-          <div className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-2 flex items-center gap-2`}>
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span className={`text-sm font-medium ${isDarkMode ? 'text-white/80' : 'text-gray-800'}`}>
-              {restaurants.length} veggie restaurants nearby
+          <div className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-2 flex items-center gap-3`}>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span className={`text-sm font-medium ${isDarkMode ? 'text-white/80' : 'text-gray-800'}`}>
+                {restaurants.filter(r => r.isVeggie).length} veggie
+              </span>
+            </div>
+            <div className={`w-px h-4 ${isDarkMode ? 'bg-white/20' : 'bg-gray-300'}`}></div>
+            <span className={`text-sm ${isDarkMode ? 'text-white/50' : 'text-gray-500'}`}>
+              {restaurants.length} restaurants nearby
             </span>
           </div>
         </div>
