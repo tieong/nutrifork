@@ -6,9 +6,11 @@ import RestaurantModal from '../components/RestaurantModal'
 import SettingsModal from '../components/SettingsModal'
 import ProfileModal from '../components/ProfileModal'
 
+// École 42 Paris - 96 Boulevard Bessières, 75017 Paris
+// Coordonnées exactes vérifiées sur Google Maps
 const defaultCenter = {
-  lat: 48.8566,
-  lng: 2.3522
+  lat: 48.8965,
+  lng: 2.3183
 }
 
 // Helper function to filter dishes based on user allergies
@@ -340,6 +342,7 @@ function MapPage({ user, setUser }) {
 
   // Search for nearby restaurants using Google Places API
   // PRIORITÉ : Restos vegan/veggietariens d'abord, puis les autres
+  // STRATÉGIE : Faire plusieurs requêtes pour obtenir plus de 20 résultats
   const searchNearbyRestaurants = useCallback(async (location) => {
     if (!isLoaded || !window.google) return
 
@@ -351,53 +354,86 @@ function MapPage({ user, setUser }) {
         fields: ['displayName', 'location', 'formattedAddress', 'rating', 'types', 'businessStatus', 'primaryType'],
         locationRestriction: {
           center: location,
-          radius: 1500,
+          radius: 1000, // 1km pour des résultats plus proches
         },
         maxResultCount: 20,
-        rankPreference: SearchNearbyRankPreference.POPULARITY,
+        rankPreference: SearchNearbyRankPreference.DISTANCE, // Trier par distance, pas popularité
         language: 'fr',
         region: 'fr',
       }
 
-      // 1️⃣ D'abord : chercher les restos VEGAN et VEGANTARIENS
-      const veggieRequest = {
-        ...baseRequest,
-        includedPrimaryTypes: [
-          'vegan_restaurant',
-          'vegetarian_restaurant'
-        ],
-      }
-
-      let veggieResults = []
-      try {
-        const veggieResponse = await Place.searchNearby(veggieRequest)
-        veggieResults = veggieResponse.places || []
-        console.log('🌱 Restos veggie/vegan trouvés:', veggieResults.length)
-      } catch (e) {
-        console.log('Pas de restos veggie trouvés, recherche classique...')
-      }
-
-      // 2️⃣ Ensuite : chercher les autres restos pour compléter
-      const otherRequest = {
-        ...baseRequest,
-        includedPrimaryTypes: [
-          'restaurant',
-          'cafe',
-          'bakery',
-          'meal_takeaway'
-        ],
-      }
-
-      const otherResponse = await Place.searchNearby(otherRequest)
-      const otherResults = otherResponse.places || []
-      console.log('🍽️ Autres restos trouvés:', otherResults.length)
-
-      // 3️⃣ Merger : veggie d'abord, puis les autres (sans doublons)
-      const veggieIds = new Set(veggieResults.map(p => p.id))
-      const allPlaces = [
-        ...veggieResults,
-        ...otherResults.filter(p => !veggieIds.has(p.id))
+      // Liste de requêtes ciblées (limitées pour la démo)
+      const searchQueries = [
+        // 1️⃣ Restos VEGAN (priorité absolue)
+        {
+          request: {
+            ...baseRequest,
+            maxResultCount: 10,
+            includedPrimaryTypes: ['vegan_restaurant']
+          },
+          label: '🌿 Vegan'
+        },
+        // 2️⃣ Restos VEGETARIAN (haute priorité)
+        {
+          request: {
+            ...baseRequest,
+            maxResultCount: 10,
+            includedPrimaryTypes: ['vegetarian_restaurant']
+          },
+          label: '🌱 Vegetarian'
+        },
+        // 3️⃣ Restaurants génériques
+        {
+          request: {
+            ...baseRequest,
+            maxResultCount: 15,
+            includedPrimaryTypes: ['restaurant']
+          },
+          label: '🍽️ Restaurants'
+        },
+        // 4️⃣ Cafés
+        {
+          request: {
+            ...baseRequest,
+            maxResultCount: 10,
+            includedPrimaryTypes: ['cafe']
+          },
+          label: '☕ Cafés'
+        }
       ]
+
+      // Exécuter toutes les requêtes en parallèle
+      console.log('🔍 Lancement de', searchQueries.length, 'requêtes en parallèle...')
+      const allResults = await Promise.allSettled(
+        searchQueries.map(async (queryConfig) => {
+          try {
+            const response = await Place.searchNearby(queryConfig.request)
+            const places = response.places || []
+            console.log(`  ${queryConfig.label}: ${places.length} résultats`)
+            return places
+          } catch (error) {
+            console.log(`  ${queryConfig.label}: erreur (${error.message})`)
+            return []
+          }
+        })
+      )
+
+      // Fusionner tous les résultats en évitant les doublons
+      const seenIds = new Set()
+      const allPlaces = []
+
+      allResults.forEach((result) => {
+        if (result.status === 'fulfilled') {
+          result.value.forEach(place => {
+            if (!seenIds.has(place.id)) {
+              seenIds.add(place.id)
+              allPlaces.push(place)
+            }
+          })
+        }
+      })
+
+      console.log('✅ Total unique:', allPlaces.length, 'restaurants trouvés')
 
       if (allPlaces.length > 0) {
         const excludedTypes = ['museum', 'park', 'tourist_attraction', 'art_gallery', 'library',
@@ -407,16 +443,18 @@ function MapPage({ user, setUser }) {
 
         const transformedRestaurants = allPlaces
           .filter(place => {
+            // Vérifier que le place a une location valide
+            if (!place.location) return false
+
             const placeTypes = place.types || []
             const hasExcludedType = placeTypes.some(type => excludedTypes.includes(type))
             return !hasExcludedType && place.businessStatus === 'OPERATIONAL'
           })
           .map(place => {
             const primaryType = place.primaryType || place.types?.[0] || 'restaurant'
-            const isVeggie = primaryType === 'vegan_restaurant' || 
-                            primaryType === 'vegetarian_restaurant' ||
-                            veggieIds.has(place.id)
-            
+            const isVeggie = primaryType === 'vegan_restaurant' ||
+                            primaryType === 'vegetarian_restaurant'
+
             const typeLabels = {
               'vegan_restaurant': '🌿 Vegan',
               'vegetarian_restaurant': '🌱 Vegetarian',
@@ -425,7 +463,24 @@ function MapPage({ user, setUser }) {
               'bar': 'Bar',
               'bakery': 'Bakery',
               'meal_takeaway': 'Takeaway',
+              'fast_food_restaurant': 'Fast Food',
               'food': 'Restaurant'
+            }
+
+            // Gérer location de manière robuste
+            let lat = location.lat
+            let lng = location.lng
+
+            try {
+              if (place.location && typeof place.location.lat === 'function') {
+                lat = place.location.lat()
+                lng = place.location.lng()
+              } else if (place.location && typeof place.location.lat === 'number') {
+                lat = place.location.lat
+                lng = place.location.lng
+              }
+            } catch (e) {
+              console.warn('Error getting location for place:', place.displayName, e)
             }
 
             return {
@@ -433,8 +488,8 @@ function MapPage({ user, setUser }) {
               name: place.displayName || 'Restaurant',
               address: place.formattedAddress || '',
               position: {
-                lat: place.location?.lat() || location.lat,
-                lng: place.location?.lng() || location.lng,
+                lat,
+                lng,
               },
               rating: place.rating || 4.0,
               type: typeLabels[primaryType] || 'Restaurant',
@@ -446,7 +501,18 @@ function MapPage({ user, setUser }) {
             }
           })
 
-        setRestaurants(transformedRestaurants)
+        // Trier : veggie d'abord, puis par rating
+        const sortedRestaurants = transformedRestaurants.sort((a, b) => {
+          if (a.isVeggie && !b.isVeggie) return -1
+          if (!a.isVeggie && b.isVeggie) return 1
+          return (b.rating || 0) - (a.rating || 0)
+        })
+
+        // Limiter à 30 restaurants max pour la démo
+        const limitedRestaurants = sortedRestaurants.slice(0, 30)
+
+        console.log('🌱', limitedRestaurants.filter(r => r.isVeggie).length, 'restos veggie sur', limitedRestaurants.length, 'total')
+        setRestaurants(limitedRestaurants)
       } else {
         setRestaurants([])
       }
@@ -468,6 +534,11 @@ function MapPage({ user, setUser }) {
 
   // Get user location
   useEffect(() => {
+    // Pour la démo : toujours utiliser l'école 42 comme position
+    // Si tu veux activer la géolocalisation réelle, décommente le code ci-dessous
+    setUserLocation(defaultCenter)
+
+    /*
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -483,6 +554,7 @@ function MapPage({ user, setUser }) {
         }
       )
     }
+    */
   }, [])
 
   // Search restaurants when location changes
