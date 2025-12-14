@@ -4,6 +4,8 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import RestaurantModal from '../components/RestaurantModal'
 import SettingsModal from '../components/SettingsModal'
 import { getMockDishesForRestaurant } from '../services/mockDishesService'
+import carrotGoodSvg from '../assets/carrot-good-optimized.svg?raw'
+import carrotBadSvg from '../assets/carrot-bad-optimized.svg?raw'
 
 // École 42 Paris - 96 Boulevard Bessières, 75017 Paris
 // Coordonnées exactes vérifiées sur Google Maps
@@ -209,8 +211,8 @@ function createRestaurantMarker(restaurant, index) {
   const markerClass = isVeggie ? 'veggie-marker' :
     (veggieScore >= 50 ? 'rating-excellent' : veggieScore >= 25 ? 'rating-high' : 'rating-medium')
 
-  // Icône selon le type
-  const icon = isVeggie ? '🌱' : '🍽️'
+  // Utiliser les SVG de carottes
+  const icon = isVeggie ? carrotGoodSvg : carrotBadSvg
 
   const container = document.createElement('div')
   container.className = 'marker-container'
@@ -220,7 +222,7 @@ function createRestaurantMarker(restaurant, index) {
     <div class="restaurant-marker ${markerClass}">
       <div class="restaurant-marker-glow"></div>
       <div class="restaurant-marker-inner">
-        <span class="restaurant-marker-icon">${icon}</span>
+        <div class="restaurant-marker-icon" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">${icon}</div>
       </div>
       <div class="restaurant-marker-rating">
         <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
