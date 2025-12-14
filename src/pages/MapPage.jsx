@@ -3,6 +3,7 @@ import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import RestaurantModal from '../components/RestaurantModal'
 import SettingsModal from '../components/SettingsModal'
+import { getMockDishesForRestaurant } from '../services/mockDishesService'
 
 // École 42 Paris - 96 Boulevard Bessières, 75017 Paris
 // Coordonnées exactes vérifiées sur Google Maps
@@ -24,6 +25,15 @@ const filterDishesByAllergies = (dishes, userAllergies) => {
     )
     return !hasAllergen
   })
+}
+
+// Helper function to calculate veggie score for a restaurant
+const calculateVeggieScore = (restaurant) => {
+  const dishes = getMockDishesForRestaurant(restaurant)
+  if (!dishes || dishes.length === 0) return 0
+
+  const veggieCount = dishes.filter(dish => dish.vegetarian).length
+  return Math.round((veggieCount / dishes.length) * 100)
 }
 
 // ============================================
@@ -192,20 +202,20 @@ function createUserMarker() {
 // ANIMATED RESTAURANT MARKER COMPONENT
 // ============================================
 function createRestaurantMarker(restaurant, index) {
-  const rating = restaurant.rating || 4.0
+  const veggieScore = restaurant.veggieScore || 0
   const isVeggie = restaurant.isVeggie || false
-  
-  // Classes selon le type
-  const markerClass = isVeggie ? 'veggie-marker' : 
-    (rating >= 4.5 ? 'rating-excellent' : rating >= 4.0 ? 'rating-high' : 'rating-medium')
-  
+
+  // Classes selon le score végé (0-100)
+  const markerClass = isVeggie ? 'veggie-marker' :
+    (veggieScore >= 50 ? 'rating-excellent' : veggieScore >= 25 ? 'rating-high' : 'rating-medium')
+
   // Icône selon le type
   const icon = isVeggie ? '🌱' : '🍽️'
-  
+
   const container = document.createElement('div')
   container.className = 'marker-container'
   container.style.animationDelay = `${index * 60}ms`
-  
+
   container.innerHTML = `
     <div class="restaurant-marker ${markerClass}">
       <div class="restaurant-marker-glow"></div>
@@ -214,12 +224,12 @@ function createRestaurantMarker(restaurant, index) {
       </div>
       <div class="restaurant-marker-rating">
         <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-        <span>${rating.toFixed(1)}</span>
+        <span>${veggieScore}%</span>
       </div>
-      ${isVeggie ? '<div class="veggie-badge">VEGAN</div>' : ''}
+      ${isVeggie ? '<div class="veggie-badge">PLANT</div>' : ''}
     </div>
   `
-  
+
   return container
 }
 
@@ -336,20 +346,12 @@ function MapPage() {
         {
           request: {
             ...baseRequest,
-            maxResultCount: 15,
+            maxResultCount: 20,
             includedPrimaryTypes: ['restaurant']
           },
           label: '🍽️ Restaurants'
-        },
-        // 4️⃣ Cafés
-        {
-          request: {
-            ...baseRequest,
-            maxResultCount: 10,
-            includedPrimaryTypes: ['cafe']
-          },
-          label: '☕ Cafés'
         }
+        // Cafés exclus volontairement
       ]
 
       // Exécuter toutes les requêtes en parallèle
@@ -389,7 +391,8 @@ function MapPage() {
         const excludedTypes = ['museum', 'park', 'tourist_attraction', 'art_gallery', 'library',
                                'gym', 'spa', 'church', 'mosque', 'synagogue', 'school', 'hospital',
                                'amusement_park', 'aquarium', 'zoo', 'stadium', 'shopping_mall',
-                               'store', 'clothing_store', 'book_store', 'night_club']
+                               'store', 'clothing_store', 'book_store', 'night_club',
+                               'cafe', 'coffee_shop', 'breakfast_restaurant', 'brunch_restaurant']
 
         const transformedRestaurants = allPlaces
           .filter(place => {
@@ -433,8 +436,12 @@ function MapPage() {
               console.warn('Error getting location for place:', place.displayName, e)
             }
 
-            return {
-              id: place.id || `place-${Math.random()}`,
+            // Créer un ID stable basé sur le nom + position pour le cache
+            const stableId = `${place.displayName || 'Restaurant'}-${lat.toFixed(6)}-${lng.toFixed(6)}`
+
+            const restaurant = {
+              id: place.id || stableId,
+              stableId: stableId, // ID stable pour le cache des menus
               name: place.displayName || 'Restaurant',
               address: place.formattedAddress || '',
               position: {
@@ -449,13 +456,18 @@ function MapPage() {
               isLoading: false,
               menuFetched: false
             }
+
+            // Calculer le score végé pour chaque restaurant
+            restaurant.veggieScore = calculateVeggieScore(restaurant)
+
+            return restaurant
           })
 
-        // Trier : veggie d'abord, puis par rating
+        // Trier : veggie d'abord, puis par score végé
         const sortedRestaurants = transformedRestaurants.sort((a, b) => {
           if (a.isVeggie && !b.isVeggie) return -1
           if (!a.isVeggie && b.isVeggie) return 1
-          return (b.rating || 0) - (a.rating || 0)
+          return (b.veggieScore || 0) - (a.veggieScore || 0)
         })
 
         // Limiter à 30 restaurants max pour la démo

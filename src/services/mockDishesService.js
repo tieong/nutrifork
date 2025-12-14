@@ -776,29 +776,111 @@ function getRestaurantCategory(restaurant) {
   return 'default'
 }
 
+// ============================================
+// CACHE DES MENUS PAR RESTAURANT
+// ============================================
+const menuCache = new Map()
+
+/**
+ * Génère un nombre pseudo-aléatoire déterministe basé sur une seed
+ * @param {string} seed - La seed (par exemple, l'ID du restaurant)
+ * @returns {number} Un nombre entre 0 et 1
+ */
+function seededRandom(seed) {
+  const x = Math.sin(seed) * 10000
+  return x - Math.floor(x)
+}
+
+/**
+ * Mélange un tableau de manière déterministe basée sur une seed
+ * @param {Array} array - Le tableau à mélanger
+ * @param {string} seed - La seed pour le mélange
+ * @returns {Array} Le tableau mélangé
+ */
+function seededShuffle(array, seed) {
+  const arr = [...array]
+  let currentIndex = arr.length
+  let seedValue = 0
+
+  // Convertir la seed en nombre
+  for (let i = 0; i < seed.length; i++) {
+    seedValue += seed.charCodeAt(i)
+  }
+
+  while (currentIndex !== 0) {
+    // Utiliser la seed pour générer un index
+    seedValue = (seedValue * 9301 + 49297) % 233280
+    const randomIndex = Math.floor((seedValue / 233280) * currentIndex)
+    currentIndex--
+
+    // Échanger les éléments
+    [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]]
+  }
+
+  return arr
+}
+
 /**
  * Retourne des plats mock pour un restaurant
  * @param {Object} restaurant - Le restaurant (de Google Places)
  * @returns {Array} Liste de plats
  */
 export function getMockDishesForRestaurant(restaurant) {
+  // Vérifier si le menu est déjà en cache
+  // Utiliser stableId en priorité pour garantir la cohérence
+  const restaurantId = restaurant.stableId || restaurant.id || restaurant.place_id || restaurant.name
+  if (menuCache.has(restaurantId)) {
+    return menuCache.get(restaurantId)
+  }
+
   // D'abord, vérifier si c'est un restaurant connu autour de 42
   const resto42 = findRestaurant42ByName(restaurant.name || '')
   if (resto42 && resto42.menu) {
-    // Retourner le menu complet du resto 42
+    // Mettre en cache et retourner le menu complet du resto 42
+    menuCache.set(restaurantId, resto42.menu)
     return resto42.menu
   }
-  
+
   // Sinon, utiliser les plats génériques par catégorie
   const category = getRestaurantCategory(restaurant)
   const dishes = DISHES_BY_TYPE[category] || DISHES_BY_TYPE.default
-  
-  // Mélanger un peu les plats pour plus de variété
-  const shuffled = [...dishes].sort(() => Math.random() - 0.5)
-  
-  // Retourner entre 5 et 8 plats
-  const count = 5 + Math.floor(Math.random() * 4)
-  return shuffled.slice(0, count)
+
+  // Pour les restaurants vegan/vegetarian, avoir 70-100% de plats végétariens
+  const isVeggieRestaurant = restaurant.primaryType === 'vegan_restaurant' ||
+                             restaurant.primaryType === 'vegetarian_restaurant' ||
+                             restaurant.isVeggie === true
+
+  // Mélanger tous les plats
+  const shuffled = seededShuffle(dishes, restaurantId)
+
+  // Déterminer le nombre de plats de manière déterministe (entre 5 et 8)
+  const seedNum = seededRandom(restaurantId.length)
+  const count = 5 + Math.floor(seedNum * 4)
+
+  let menu
+  if (isVeggieRestaurant) {
+    // Pour les restos veggie : 70-100% de plats végétariens
+    const veggieDishes = shuffled.filter(dish => dish.vegetarian === true)
+    const nonVeggieDishes = shuffled.filter(dish => dish.vegetarian === false)
+
+    // Calculer combien de plats non-végé ajouter (0-30% du total)
+    const targetVeggiePercent = 70 + (seededRandom(restaurantId.length * 2) * 30) // 70-100%
+    const veggieCount = Math.ceil(count * targetVeggiePercent / 100)
+    const nonVeggieCount = count - veggieCount
+
+    // Composer le menu
+    menu = [
+      ...veggieDishes.slice(0, veggieCount),
+      ...nonVeggieDishes.slice(0, nonVeggieCount)
+    ]
+  } else {
+    // Pour les restos normaux, garder le mélange normal
+    menu = shuffled.slice(0, count)
+  }
+
+  menuCache.set(restaurantId, menu)
+
+  return menu
 }
 
 /**

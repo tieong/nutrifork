@@ -75,9 +75,12 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
     return 0
   })
 
-  // Compter les plats safe pour le score
+  // Calculer le score végé (% de plats végétariens, indépendamment des allergies)
+  const veggieCount = dishes.filter(d => d.vegetarian).length
+  const veggieScore = dishes.length > 0 ? Math.round((veggieCount / dishes.length) * 100) : 0
+
+  // Compter les plats safe (végétariens sans allergènes) pour info
   const safeCount = dishes.filter(d => isDishSafe(d)).length
-  const veggieScore = dishes.length > 0 ? Math.round((safeCount / dishes.length) * 100) : 0
 
   return (
     <div 
