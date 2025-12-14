@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import RestaurantModal from '../components/RestaurantModal'
-import SettingsModal from '../components/SettingsModal'
+import { AllergiesPanel } from '../components/LiquidGlassPanels'
 import { getMockDishesForRestaurant } from '../services/mockDishesService'
 import carrotGoodSvg from '../assets/carrot-good-optimized.svg?raw'
 import carrotBadSvg from '../assets/carrot-bad-optimized.svg?raw'
@@ -47,37 +47,12 @@ function MapHeader({
   veggieCount,
   isSearching,
   isDarkMode,
-  onToggleTheme,
-  onSettings
+  onToggleTheme
 }) {
   return (
     <div className="absolute top-4 left-4 right-4 z-20 animate-slide-down flex justify-between items-start">
       {/* Left side - Logo & Stats */}
       <div className={`header-glass ${isDarkMode ? 'header-dark' : 'header-light'} px-4 py-3 flex items-center gap-3`}>
-
-        {/* Settings button */}
-        <button
-          onClick={onSettings}
-          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 group
-            ${isDarkMode
-              ? 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white'
-              : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800'
-            }`}
-          title="Settings"
-        >
-          <svg
-            className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        </button>
-
-        {/* Divider */}
-        <div className={`w-px h-8 ${isDarkMode ? 'bg-white/20' : 'bg-gray-300'}`}></div>
 
         {/* Logo */}
         <div className="flex items-center gap-2.5">
@@ -247,8 +222,6 @@ function MapPage() {
     const saved = localStorage.getItem('nutrifork-theme')
     return saved ? saved === 'dark' : false // Light by default
   })
-  // Modal states
-  const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   const mapContainerRef = useRef(null)
   const mapRef = useRef(null)
@@ -652,7 +625,6 @@ function MapPage() {
         isSearching={isSearching}
         isDarkMode={isDarkMode}
         onToggleTheme={handleToggleTheme}
-        onSettings={() => setShowSettingsModal(true)}
       />
 
       {/* MapLibre Map */}
@@ -660,6 +632,13 @@ function MapPage() {
         ref={mapContainerRef} 
         className="w-full h-full"
         style={{ background: isDarkMode ? '#0a0f1a' : '#f1f5f9' }}
+      />
+
+      {/* Liquid Glass Panel */}
+      <AllergiesPanel
+        allergies={userAllergies}
+        onAllergiesUpdate={handleAllergiesUpdate}
+        isDarkMode={isDarkMode}
       />
 
       {/* Restaurant count floating badge */}
@@ -689,14 +668,6 @@ function MapPage() {
           isDarkMode={isDarkMode}
         />
       )}
-
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={showSettingsModal}
-        onClose={() => setShowSettingsModal(false)}
-        userAllergies={userAllergies}
-        onAllergiesUpdate={handleAllergiesUpdate}
-      />
     </div>
   )
 }
