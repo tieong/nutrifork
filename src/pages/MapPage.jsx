@@ -3,6 +3,7 @@ import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import RestaurantModal from '../components/RestaurantModal'
 import SettingsModal from '../components/SettingsModal'
+import SearchModal from '../components/SearchModal'
 import PillNavbar from '../components/PillNavbar'
 import carroteGood from '../assets/carrote-good.svg'
 import carroteBad from '../assets/carrote-bad.svg'
@@ -84,6 +85,7 @@ function MapPage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [mapLoaded, setMapLoaded] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
+  const [showSearchModal, setShowSearchModal] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem('nutrifork-theme')
     return saved ? saved === 'dark' : false // Light by default
@@ -104,6 +106,76 @@ function MapPage() {
       localStorage.setItem('nutrifork-theme', newValue ? 'dark' : 'light')
       return newValue
     })
+  }
+
+  // Handle location selection from search
+  const handleLocationSelect = (location) => {
+    console.log('📍 Location selected:', location)
+
+    // Update user location
+    setUserLocation({
+      lat: location.lat,
+      lng: location.lng
+    })
+
+    // Update map center
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: [location.lng, location.lat],
+        zoom: 15,
+        duration: 2000,
+        essential: true
+      })
+    }
+
+    // If it's a restaurant, open the restaurant modal
+    if (location.isRestaurant) {
+      console.log('🍽️ Opening restaurant modal for:', location.name)
+
+      // Determine restaurant type
+      const primaryType = location.types.find(type =>
+        ['vegan_restaurant', 'vegetarian_restaurant', 'restaurant', 'cafe', 'bar'].includes(type)
+      ) || 'restaurant'
+
+      const isVeggie = primaryType === 'vegan_restaurant' || primaryType === 'vegetarian_restaurant'
+
+      // Calculate estimated score based on type
+      let estimatedScore = 50
+      if (primaryType === 'vegan_restaurant') {
+        estimatedScore = 95
+      } else if (primaryType === 'vegetarian_restaurant') {
+        estimatedScore = 80
+      } else if (isVeggie) {
+        estimatedScore = 75
+      } else {
+        estimatedScore = Math.min(60, Math.round(location.rating * 10))
+      }
+
+      // Create restaurant object compatible with RestaurantModal
+      const restaurant = {
+        id: location.placeId || `search-${Date.now()}`,
+        name: location.name,
+        address: location.address,
+        position: {
+          lat: location.lat,
+          lng: location.lng
+        },
+        rating: location.rating,
+        type: primaryType === 'vegan_restaurant' ? '🌿 Vegan'
+              : primaryType === 'vegetarian_restaurant' ? '🌱 Vegetarian'
+              : primaryType === 'cafe' ? 'Café'
+              : 'Restaurant',
+        primaryType,
+        isVeggie,
+        veggieScore: estimatedScore,
+        dishes: [],
+        isLoading: false,
+        menuFetched: false
+      }
+
+      // Open restaurant modal
+      setSelectedRestaurant(restaurant)
+    }
   }
 
   // Update map style when theme changes
@@ -518,6 +590,7 @@ function MapPage() {
       <PillNavbar
         isDarkMode={isDarkMode}
         onToggleTheme={handleToggleTheme}
+        onSearch={() => setShowSearchModal(true)}
         onSettings={() => setShowSettingsModal(prev => !prev)}
         allergiesCount={userAllergies.length}
       />
@@ -545,6 +618,14 @@ function MapPage() {
         userAllergies={userAllergies}
         onAllergiesUpdate={handleAllergiesUpdate}
         onClose={() => setShowSettingsModal(false)}
+        isDarkMode={isDarkMode}
+      />
+
+      {/* Search modal */}
+      <SearchModal
+        isOpen={showSearchModal}
+        onClose={() => setShowSearchModal(false)}
+        onLocationSelect={handleLocationSelect}
         isDarkMode={isDarkMode}
       />
     </div>

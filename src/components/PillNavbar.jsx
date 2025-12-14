@@ -6,6 +6,7 @@ const PillNavbar = ({
   isDarkMode,
   onToggleTheme,
   onSettings,
+  onSearch,
   allergiesCount,
   className = ''
 }) => {
@@ -206,6 +207,11 @@ const PillNavbar = ({
 
   const buttons = [
     {
+      label: '🔍',
+      onClick: onSearch,
+      ariaLabel: 'Search address'
+    },
+    {
       label: isDarkMode ? '☀️' : '🌙',
       onClick: onToggleTheme,
       ariaLabel: isDarkMode ? 'Light mode' : 'Dark mode'
@@ -281,6 +287,17 @@ const PillNavbar = ({
 
       <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={cssVars}>
         <ul className="mobile-menu-list">
+          <li>
+            <button
+              className="mobile-menu-link"
+              onClick={() => {
+                onSearch()
+                setIsMobileMenuOpen(false)
+              }}
+            >
+              🔍 Search address
+            </button>
+          </li>
           <li>
             <button
               className="mobile-menu-link"
