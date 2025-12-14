@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
 
 // ============================================
 // SETTINGS MODAL - Édition des préférences
@@ -16,10 +15,9 @@ const commonAllergies = [
   { id: 'sésame', name: 'Sésame', icon: '🌰' },
 ]
 
-function SettingsModal({ isOpen, onClose, user, userAllergies, onAllergiesUpdate }) {
+function SettingsModal({ isOpen, onClose, userAllergies, onAllergiesUpdate }) {
   const [selectedAllergies, setSelectedAllergies] = useState(userAllergies || [])
   const [saving, setSaving] = useState(false)
-  const [activeTab, setActiveTab] = useState('allergies')
 
   useEffect(() => {
     setSelectedAllergies(userAllergies || [])
@@ -33,29 +31,15 @@ function SettingsModal({ isOpen, onClose, user, userAllergies, onAllergiesUpdate
     )
   }
 
-  const handleSave = async () => {
+  const handleSave = () => {
     setSaving(true)
-    
+
     // Save to localStorage
     localStorage.setItem('userAllergies', JSON.stringify(selectedAllergies))
-    
-    // Save to Supabase if logged in
-    if (user) {
-      await supabase
-        .from('profiles')
-        .update({ allergies: selectedAllergies })
-        .eq('id', user.id)
-    }
 
     onAllergiesUpdate(selectedAllergies)
     setSaving(false)
     onClose()
-  }
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    localStorage.removeItem('userAllergies')
-    window.location.href = '/'
   }
 
   if (!isOpen) return null
@@ -423,101 +407,44 @@ function SettingsModal({ isOpen, onClose, user, userAllergies, onAllergiesUpdate
             </button>
           </div>
 
-          {/* Tabs */}
-          <div className="settings-tabs">
-            <button 
-              className={`settings-tab ${activeTab === 'allergies' ? 'active' : ''}`}
-              onClick={() => setActiveTab('allergies')}
-            >
-              <span>⚠️</span>
-              Allergies
-            </button>
-            <button 
-              className={`settings-tab ${activeTab === 'account' ? 'active' : ''}`}
-              onClick={() => setActiveTab('account')}
-            >
-              <span>👤</span>
-              Compte
-            </button>
-          </div>
-
           {/* Content */}
           <div className="settings-content">
-            {activeTab === 'allergies' && (
-              <>
-                <div className="settings-section-title">Sélectionnez vos allergies</div>
-                <div className="allergies-grid">
-                  {commonAllergies.map((allergy) => {
-                    const isSelected = selectedAllergies.includes(allergy.id)
-                    return (
-                      <button
-                        key={allergy.id}
-                        className={`allergy-item ${isSelected ? 'selected' : ''}`}
-                        onClick={() => toggleAllergy(allergy.id)}
-                      >
-                        <span className="allergy-icon">{allergy.icon}</span>
-                        <span className="allergy-name">{allergy.name}</span>
-                        <div className="allergy-check">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-              </>
-            )}
-
-            {activeTab === 'account' && (
-              <>
-                {user ? (
-                  <>
-                    <div className="settings-section-title">Votre compte</div>
-                    <div className="account-info">
-                      <div className="account-avatar">
-                        {user.email?.charAt(0).toUpperCase() || 'U'}
-                      </div>
-                      <div className="account-details">
-                        <h3>{user.user_metadata?.name || user.email?.split('@')[0]}</h3>
-                        <p>{user.email}</p>
-                      </div>
-                    </div>
-                    
-                    <button className="logout-btn" onClick={handleLogout}>
-                      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            <div className="settings-section-title">Sélectionnez vos allergies</div>
+            <div className="allergies-grid">
+              {commonAllergies.map((allergy) => {
+                const isSelected = selectedAllergies.includes(allergy.id)
+                return (
+                  <button
+                    key={allergy.id}
+                    className={`allergy-item ${isSelected ? 'selected' : ''}`}
+                    onClick={() => toggleAllergy(allergy.id)}
+                  >
+                    <span className="allergy-icon">{allergy.icon}</span>
+                    <span className="allergy-name">{allergy.name}</span>
+                    <div className="allergy-check">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
-                      Se déconnecter
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <div className="settings-section-title">Pas encore de compte</div>
-                    <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '16px' }}>
-                      Connectez-vous pour sauvegarder vos préférences et retrouver vos restaurants favoris.
-                    </p>
-                  </>
-                )}
-              </>
-            )}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           {/* Footer */}
-          {activeTab === 'allergies' && (
-            <div className="settings-footer">
-              <button className="settings-btn settings-btn-cancel" onClick={onClose}>
-                Annuler
-              </button>
-              <button 
-                className="settings-btn settings-btn-save" 
-                onClick={handleSave}
-                disabled={saving}
-              >
-                {saving ? 'Sauvegarde...' : 'Sauvegarder'}
-              </button>
-            </div>
-          )}
+          <div className="settings-footer">
+            <button className="settings-btn settings-btn-cancel" onClick={onClose}>
+              Annuler
+            </button>
+            <button
+              className="settings-btn settings-btn-save"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? 'Sauvegarde...' : 'Sauvegarder'}
+            </button>
+          </div>
         </div>
       </div>
     </>
