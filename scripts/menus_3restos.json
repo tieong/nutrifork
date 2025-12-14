@@ -1,0 +1,304 @@
+[
+  {
+    "id": "full-moon-kebab",
+    "name": "Full Moon Kebab",
+    "address": "Boulevard Bessières, 75017 Paris",
+    "dishes": [
+      {
+        "id": "Full Moon Kebab-0",
+        "name": "Kebab Dinde",
+        "price": 9.9,
+        "vegetarian": false,
+        "allergens": [
+          "gluten",
+          "lactose"
+        ],
+        "description": "Viande de dinde halal juteuse et grillée, servie dans un pain pita moelleux avec salade fraîche, tomates, oignons et sauce yogurt maison onctueuse."
+      },
+      {
+        "id": "Full Moon Kebab-1",
+        "name": "Kebab Bœuf",
+        "price": 10.5,
+        "vegetarian": false,
+        "allergens": [
+          "gluten"
+        ],
+        "description": "Fines tranches de bœuf halal savoureuses et épicées, accompagnées de légumes croquants, frites et sauce samouraï relevée pour un plaisir intense."
+      },
+      {
+        "id": "Full Moon Kebab-2",
+        "name": "Bao N°1 Bœuf",
+        "price": 12.9,
+        "vegetarian": false,
+        "allergens": [
+          "gluten",
+          "lactose",
+          "sesame"
+        ],
+        "description": "Le petit bao qui a tout d'un grand ! Steak smashé croustillant, cheddar coulant et sauce burger irrésistible, parfait pour les petites faims."
+      },
+      {
+        "id": "Full Moon Kebab-3",
+        "name": "Bao Poulet",
+        "price": 12.9,
+        "vegetarian": false,
+        "allergens": [
+          "gluten",
+          "sesame"
+        ],
+        "description": "Poulet halal frit doré et tendre niché dans un bao brioché, avec sauce aigre-douce et pickles pour une explosion de saveurs asiatiques fusion."
+      },
+      {
+        "id": "Full Moon Kebab-4",
+        "name": "Salade Thon",
+        "price": 8.9,
+        "vegetarian": false,
+        "allergens": [
+          "gluten",
+          "fish"
+        ],
+        "description": "Base de salade verte fraîche agrémentée de tomates juteuses, olives, maïs, cornichons, croûtons croustillants et thon savoureux, idéale pour un repas léger."
+      },
+      {
+        "id": "Full Moon Kebab-5",
+        "name": "Salade Poulet Panné",
+        "price": 9.5,
+        "vegetarian": false,
+        "allergens": [
+          "gluten"
+        ],
+        "description": "Salade généreuse avec poulet pané croustillant, tomates, olives, maïs et cornichons, assaisonnée d'une vinaigrette légère et parfumée."
+      },
+      {
+        "id": "Full Moon Kebab-6",
+        "name": "Falafel Kebab",
+        "price": 9,
+        "vegetarian": true,
+        "allergens": [
+          "gluten",
+          "sesame"
+        ],
+        "description": "Boulettes de falafel maison croustillantes et épicées, servies dans du pain avec salade, tahini crémeux et légumes frais pour un régal végétarien."
+      },
+      {
+        "id": "Full Moon Kebab-7",
+        "name": "Salade Végétarienne",
+        "price": 7.9,
+        "vegetarian": true,
+        "allergens": [
+          "gluten"
+        ],
+        "description": "Mélange vibrant de salade, tomates, olives, maïs, cornichons et croûtons, arrosé d'une vinaigrette à l'huile d'olive pour une fraîcheur absolue."
+      }
+    ],
+    "veggieScore": 25
+  },
+  {
+    "id": "le-95",
+    "name": "Le 95",
+    "address": "Boulevard Bessières, 75017 Paris",
+    "dishes": [
+      {
+        "id": "Le 95-0",
+        "name": "Foie Gras de Canard des Landes",
+        "price": 25.95,
+        "vegetarian": false,
+        "allergens": [],
+        "description": "Foie gras de canard des Landes fondant et savoureux, relevé d'une fleur de sel délicate qui exalte ses saveurs riches et onctueuses. Demi-portion idéale pour ouvrir l'appétit ou portion complète pour les amateurs."
+      },
+      {
+        "id": "Le 95-1",
+        "name": "Foie Gras de Canard des Landes (portion complète)",
+        "price": 50.95,
+        "vegetarian": false,
+        "allergens": [],
+        "description": "Foie gras de canard des Landes généreux et velouté, sublimé par une fleur de sel pure qui met en valeur sa texture crémeuse et son goût intense."
+      },
+      {
+        "id": "Le 95-2",
+        "name": "Steak Tartare",
+        "price": 38.95,
+        "vegetarian": false,
+        "allergens": [
+          "eggs",
+          "fish"
+        ],
+        "description": "Steak tartare haché à la main, agrémenté d'un jaune d'œuf crémeux, mayonnaise à l'anchois et frites Pont-Neuf croustillantes pour une explosion de saveurs umami."
+      },
+      {
+        "id": "Le 95-3",
+        "name": "Langoustines Grillées",
+        "price": 65.95,
+        "vegetarian": false,
+        "allergens": [
+          "shellfish"
+        ],
+        "description": "Langoustines grillées à la perfection, parfumées au citron, persil frais et piment d'Espelette pour une chair tendre et iodée irrésistible."
+      },
+      {
+        "id": "Le 95-4",
+        "name": "Pot-au-Feu façon Henry IV",
+        "price": 89.95,
+        "vegetarian": false,
+        "allergens": [],
+        "description": "Pot-au-feu traditionnel mijoté façon Henry IV, avec des viandes tendres et légumes fondants dans un bouillon parfumé, à partager pour deux personnes."
+      },
+      {
+        "id": "Le 95-5",
+        "name": "Pâtes au Homard Breton et Ris de Veau",
+        "price": 85.95,
+        "vegetarian": false,
+        "allergens": [
+          "shellfish"
+        ],
+        "description": "Pâtes fraîches au homard breton succulent, ris de veau délicat et foie gras, pour un plat riche en saveurs marines et terrestres harmonieusement mariées."
+      },
+      {
+        "id": "Le 95-6",
+        "name": "Saint Jacques d'Erquy",
+        "price": 62.95,
+        "vegetarian": false,
+        "allergens": [
+          "shellfish"
+        ],
+        "description": "Saint-Jacques d'Erquy saisies, accompagnées de tomates écrasées, beurre à l'ail et olives pour une noix fondante et un contraste de textures irrésistible."
+      },
+      {
+        "id": "Le 95-7",
+        "name": "Sole Meunière",
+        "price": 75.95,
+        "vegetarian": false,
+        "allergens": [
+          "fish"
+        ],
+        "description": "Sole de Dover pochée puis nappée de beurre noisette et citron, offrant une chair délicate et un beurre parfumé à la perfection."
+      },
+      {
+        "id": "Le 95-8",
+        "name": "Saint Pierre sauce Vierge",
+        "price": 72.95,
+        "vegetarian": false,
+        "allergens": [
+          "fish"
+        ],
+        "description": "Saint-Pierre grillé servi avec une sauce vierge fraîche aux herbes, tomate et huile d'olive, pour une poisson noble et savoureux."
+      },
+      {
+        "id": "Le 95-9",
+        "name": "Pâtes au Lapin Mijoté",
+        "price": 36.95,
+        "vegetarian": false,
+        "allergens": [],
+        "description": "Pâtes enveloppées d'un lapin mijoté fondant, lardo di Colonnata et sauge frite, créant un plat réconfortant aux accents italiens raffinés."
+      },
+      {
+        "id": "Le 95-10",
+        "name": "Côte de Veau de Lait",
+        "price": 75.95,
+        "vegetarian": false,
+        "allergens": [],
+        "description": "Côte de veau de lait rôtie juteuse, jus naturel, ail rôti et romarin frais pour une tendreté exceptionnelle et des arômes herbacés."
+      },
+      {
+        "id": "Le 95-11",
+        "name": "Poulet du Bourbonnais Rôti Entier (demi)",
+        "price": 42.95,
+        "vegetarian": false,
+        "allergens": [],
+        "description": "Poulet du Bourbonnais rôti entier croustillant, servi avec son jus de rôtissage et salade de cresson pour une volaille savoureuse et juteuse."
+      },
+      {
+        "id": "Le 95-12",
+        "name": "Poulet du Bourbonnais Rôti Entier (complet)",
+        "price": 84.95,
+        "vegetarian": false,
+        "allergens": [],
+        "description": "Poulet du Bourbonnais rôti entier généreux, jus parfumé et salade de cresson, parfait pour partager des saveurs authentiques et rustiques."
+      }
+    ],
+    "veggieScore": 0
+  },
+  {
+    "id": "la-petite-cabane",
+    "name": "La Petite Cabane - Delices & Mo",
+    "address": "Boulevard Bessières, 75017 Paris",
+    "dishes": [
+      {
+        "id": "La Petite Cabane - Delices & Mo-0",
+        "name": "Tortilla poulet et légumes",
+        "price": 8.5,
+        "vegetarian": false,
+        "allergens": [
+          "gluten"
+        ],
+        "description": "Tortilla moelleuse farcie de poulet grillé juteux, légumes frais croquants et sauce légère maison pour un repas savoureux et équilibré."
+      },
+      {
+        "id": "La Petite Cabane - Delices & Mo-1",
+        "name": "Formule coup de cœur Menu 1",
+        "price": 9.5,
+        "vegetarian": false,
+        "allergens": [
+          "gluten"
+        ],
+        "description": "Menu généreux avec tortilla garnie de saveurs irrésistibles, accompagné de frites croustillantes et d'une boisson rafraîchissante pour un plaisir complet."
+      },
+      {
+        "id": "La Petite Cabane - Delices & Mo-2",
+        "name": "Panini jambon fromage",
+        "price": 7.5,
+        "vegetarian": false,
+        "allergens": [
+          "gluten",
+          "lactose"
+        ],
+        "description": "Panini chaud et fondant avec jambon premium, fromage fondu crémeux et touche de moutarde pour une explosion de saveurs authentiques."
+      },
+      {
+        "id": "La Petite Cabane - Delices & Mo-3",
+        "name": "Crêpe salée végétarienne",
+        "price": 8,
+        "vegetarian": true,
+        "allergens": [
+          "gluten",
+          "lactose"
+        ],
+        "description": "Crêpe fine garnie de ratatouille provençale, fromage de chèvre frais et herbes aromatiques, un délice 100% végétarien et réconfortant."
+      },
+      {
+        "id": "La Petite Cabane - Delices & Mo-4",
+        "name": "Tortilla veggie",
+        "price": 8,
+        "vegetarian": true,
+        "allergens": [
+          "gluten"
+        ],
+        "description": "Tortilla légère aux légumes de saison bio, avocat crémeux et vinaigrette citronnée, parfaite pour un repas sain et gourmand."
+      },
+      {
+        "id": "La Petite Cabane - Delices & Mo-5",
+        "name": "Panini légumes grillés",
+        "price": 7.5,
+        "vegetarian": true,
+        "allergens": [
+          "gluten",
+          "lactose"
+        ],
+        "description": "Panini croustillant farci de légumes grillés, pesto maison et mozzarella fondante, une option irrésistible pour les amateurs de saveurs méditerranéennes."
+      },
+      {
+        "id": "La Petite Cabane - Delices & Mo-6",
+        "name": "Crêpe au thon",
+        "price": 9,
+        "vegetarian": false,
+        "allergens": [
+          "gluten",
+          "fish",
+          "eggs"
+        ],
+        "description": "Crêpe savoureuse avec thon frais émietté, oignons rouges, tomate et mayonnaise légère, un classique marin irrésistible."
+      }
+    ],
+    "veggieScore": 43
+  }
+]

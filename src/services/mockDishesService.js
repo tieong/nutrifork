@@ -792,6 +792,148 @@ function seededRandom(seed) {
 }
 
 /**
+ * Calcule l'empreinte carbone estimée d'un plat en kg CO2
+ * Basé sur le type de plat et les ingrédients
+ */
+function calculateCarbonEstimate(dish) {
+  // Facteurs carbone moyens (kg CO2 par portion)
+  if (dish.vegan) {
+    return 0.5 + Math.random() * 1.0  // 0.5-1.5 kg CO2
+  } else if (dish.vegetarian) {
+    return 1.5 + Math.random() * 1.5  // 1.5-3.0 kg CO2
+  } else {
+    // Non-végétarien
+    const name = dish.name.toLowerCase()
+    if (name.includes('bœuf') || name.includes('beef') || name.includes('veau')) {
+      return 10.0 + Math.random() * 15.0  // 10-25 kg CO2 (viande rouge)
+    } else if (name.includes('agneau') || name.includes('lamb')) {
+      return 8.0 + Math.random() * 12.0  // 8-20 kg CO2
+    } else if (name.includes('porc') || name.includes('pork') || name.includes('jambon') || name.includes('bacon')) {
+      return 4.0 + Math.random() * 4.0  // 4-8 kg CO2
+    } else if (name.includes('poulet') || name.includes('chicken') || name.includes('canard') || name.includes('duck')) {
+      return 3.0 + Math.random() * 3.0  // 3-6 kg CO2
+    } else if (name.includes('poisson') || name.includes('fish') || name.includes('saumon') || name.includes('thon')) {
+      return 2.5 + Math.random() * 2.5  // 2.5-5 kg CO2
+    } else if (name.includes('crevette') || name.includes('homard') || name.includes('langouste') || name.includes('shellfish')) {
+      return 5.0 + Math.random() * 5.0  // 5-10 kg CO2 (crustacés)
+    } else {
+      return 3.0 + Math.random() * 4.0  // 3-7 kg CO2 (viande générique)
+    }
+  }
+}
+
+/**
+ * Calcule le score planète (durabilité) sur 10
+ * Plus l'empreinte carbone est faible, meilleur est le score
+ */
+function calculatePlanetScore(carbonEstimate) {
+  // Score inversement proportionnel au carbone
+  // 0-2 kg CO2 = 9-10/10
+  // 2-5 kg CO2 = 7-9/10
+  // 5-10 kg CO2 = 4-7/10
+  // 10-15 kg CO2 = 2-4/10
+  // 15+ kg CO2 = 0-2/10
+  if (carbonEstimate < 2) {
+    return 9.0 + (2 - carbonEstimate) * 0.5
+  } else if (carbonEstimate < 5) {
+    return 7.0 + (5 - carbonEstimate) / 1.5
+  } else if (carbonEstimate < 10) {
+    return 4.0 + (10 - carbonEstimate) / 1.7
+  } else if (carbonEstimate < 15) {
+    return 2.0 + (15 - carbonEstimate) / 2.5
+  } else {
+    return Math.max(0, 2.0 - (carbonEstimate - 15) / 5)
+  }
+}
+
+/**
+ * Calcule le score plaisir (goût/expérience) sur 10
+ * Basé sur le prix et le type de plat
+ */
+function calculatePleasureScore(dish, dishId) {
+  // Score de base entre 5 et 9 (déterministe par ID)
+  const baseScore = 5.0 + seededRandom(dishId) * 4.0
+
+  // Bonus pour les prix élevés (plats premium)
+  const priceBonus = Math.min(1.5, (dish.price - 10) / 10)
+
+  // Bonus pour certains types de plats populaires
+  const name = dish.name.toLowerCase()
+  let typeBonus = 0
+  if (name.includes('burger') || name.includes('pizza') || name.includes('chocolate') || name.includes('chocolat')) {
+    typeBonus = 0.5
+  } else if (name.includes('frites') || name.includes('nuggets')) {
+    typeBonus = 0.3
+  }
+
+  return Math.min(10, baseScore + priceBonus + typeBonus)
+}
+
+/**
+ * Calcule le score de compatibilité personnelle sur 10
+ * Basé sur les allergènes et les préférences végétariennes
+ */
+function calculateFitScore(dish, userAllergies = []) {
+  let score = 10.0
+
+  // Pénalité pour chaque allergène de l'utilisateur présent
+  if (userAllergies && userAllergies.length > 0 && dish.allergens) {
+    const dishAllergens = dish.allergens.map(a => a.toLowerCase())
+    const userAllergensList = userAllergies.map(a => a.toLowerCase())
+
+    dishAllergens.forEach(allergen => {
+      if (userAllergensList.some(ua => allergen.includes(ua) || ua.includes(allergen))) {
+        score -= 3.0  // -3 points par allergène
+      }
+    })
+  }
+
+  // Bonus pour végétarien/vegan si c'est la préférence
+  if (dish.vegetarian) {
+    score += 0.5
+  }
+  if (dish.vegan) {
+    score += 0.5
+  }
+
+  return Math.max(0, Math.min(10, score))
+}
+
+/**
+ * Enrichit un plat avec des scores et attributs supplémentaires
+ */
+function enrichDish(dish, dishId, userAllergies = []) {
+  const carbonEstimate = calculateCarbonEstimate(dish)
+  const planetScore = calculatePlanetScore(carbonEstimate)
+  const pleasureScore = calculatePleasureScore(dish, dishId)
+  const fitScore = calculateFitScore(dish, userAllergies)
+
+  // Score total = moyenne pondérée
+  const totalScore = (planetScore * 0.35 + pleasureScore * 0.35 + fitScore * 0.30)
+
+  return {
+    ...dish,
+    total_score: Math.round(totalScore * 10) / 10,
+    sub_scores: {
+      s_planet: Math.round(planetScore * 10) / 10,
+      s_pleasure: Math.round(pleasureScore * 10) / 10,
+      s_fit: Math.round(fitScore * 10) / 10
+    },
+    enriched_attributes: {
+      carbon_estimate: Math.round(carbonEstimate * 10) / 10,
+      ingredients: [],  // Pourrait être enrichi plus tard
+      nova_score: dish.vegan ? 1 : (dish.vegetarian ? 2 : 3),
+      nutriscore: dish.vegan ? 'A' : (dish.vegetarian ? 'B' : 'C'),
+      dietary_tags: [
+        ...(dish.vegan ? ['vegan'] : []),
+        ...(dish.vegetarian ? ['vegetarian'] : [])
+      ],
+      allergens: dish.allergens || []
+    }
+  }
+}
+
+/**
  * Mélange un tableau de manière déterministe basée sur une seed
  * @param {Array} array - Le tableau à mélanger
  * @param {string} seed - La seed pour le mélange
@@ -823,22 +965,28 @@ function seededShuffle(array, seed) {
 /**
  * Retourne des plats mock pour un restaurant
  * @param {Object} restaurant - Le restaurant (de Google Places)
- * @returns {Array} Liste de plats
+ * @param {Array} userAllergies - Allergies de l'utilisateur (optionnel)
+ * @returns {Array} Liste de plats enrichis avec scores
  */
-export function getMockDishesForRestaurant(restaurant) {
+export function getMockDishesForRestaurant(restaurant, userAllergies = []) {
   // Vérifier si le menu est déjà en cache
   // Utiliser stableId en priorité pour garantir la cohérence
   const restaurantId = restaurant.stableId || restaurant.id || restaurant.place_id || restaurant.name
-  if (menuCache.has(restaurantId)) {
-    return menuCache.get(restaurantId)
+  const cacheKey = `${restaurantId}-${(userAllergies || []).join(',')}`
+
+  if (menuCache.has(cacheKey)) {
+    return menuCache.get(cacheKey)
   }
 
   // D'abord, vérifier si c'est un restaurant connu autour de 42
   const resto42 = findRestaurant42ByName(restaurant.name || '')
   if (resto42 && resto42.menu) {
-    // Mettre en cache et retourner le menu complet du resto 42
-    menuCache.set(restaurantId, resto42.menu)
-    return resto42.menu
+    // Enrichir les plats du resto 42 avec les scores
+    const enrichedMenu = resto42.menu.map((dish, index) =>
+      enrichDish(dish, `${restaurantId}-${index}`, userAllergies)
+    )
+    menuCache.set(cacheKey, enrichedMenu)
+    return enrichedMenu
   }
 
   // Sinon, utiliser les plats génériques par catégorie
@@ -878,18 +1026,26 @@ export function getMockDishesForRestaurant(restaurant) {
     menu = shuffled.slice(0, count)
   }
 
-  menuCache.set(restaurantId, menu)
+  // Enrichir tous les plats avec les scores
+  const enrichedMenu = menu.map((dish, index) =>
+    enrichDish(dish, `${restaurantId}-${index}`, userAllergies)
+  )
 
-  return menu
+  menuCache.set(cacheKey, enrichedMenu)
+
+  return enrichedMenu
 }
 
 /**
  * Simule un délai de chargement (pour le réalisme)
+ * @param {Object} restaurant - Le restaurant
+ * @param {number} delay - Délai en ms
+ * @param {Array} userAllergies - Allergies de l'utilisateur
  */
-export function getMockDishesWithDelay(restaurant, delay = 500) {
+export function getMockDishesWithDelay(restaurant, delay = 500, userAllergies = []) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(getMockDishesForRestaurant(restaurant))
+      resolve(getMockDishesForRestaurant(restaurant, userAllergies))
     }, delay)
   })
 }

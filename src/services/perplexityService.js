@@ -58,7 +58,7 @@ If you cannot find the exact menu, provide typical dishes for this type of resta
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-small-128k-online',
+        model: 'sonar',
         messages: [
           {
             role: 'system',

@@ -23,11 +23,11 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
     const loadMenu = async () => {
       setIsLoading(true)
       setError(null)
-      
+
       try {
         if (USE_MOCK_DISHES) {
-          // Utiliser les plats mock
-          const mockDishes = await getMockDishesWithDelay(restaurant, 600)
+          // Utiliser les plats mock avec les allergies de l'utilisateur
+          const mockDishes = await getMockDishesWithDelay(restaurant, 600, userAllergies)
           setDishes(mockDishes)
         } else {
           // Utiliser Perplexity (quand on aura l'API)
@@ -46,7 +46,7 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
     }
 
     loadMenu()
-  }, [restaurant])
+  }, [restaurant, userAllergies])
 
   if (!restaurant) return null
 
@@ -226,21 +226,23 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
                     style={{ animation: `fade-in 0.3s ease ${index * 0.04}s backwards` }}
                   >
                     <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-1">
                         {isSafe && (
                           <span className={`text-xs px-2 py-0.5 rounded-full font-medium
                             ${isDarkMode ? 'bg-emerald-500/30 text-emerald-300' : 'bg-emerald-200 text-emerald-800'}`}>
                             ✓
                           </span>
                         )}
-                        <h4 className={`font-semibold ${isSafe 
-                          ? (isDarkMode ? 'text-white' : 'text-gray-800')
-                          : (isDarkMode ? 'text-white/60' : 'text-gray-500')
-                        }`}>
-                          {dish.name}
-                        </h4>
+                        <div className="flex-1">
+                          <h4 className={`font-semibold ${isSafe
+                            ? (isDarkMode ? 'text-white' : 'text-gray-800')
+                            : (isDarkMode ? 'text-white/60' : 'text-gray-500')
+                          }`}>
+                            {dish.name}
+                          </h4>
+                        </div>
                       </div>
-                      <span className={`font-bold text-lg ml-4 shrink-0 ${isSafe 
+                      <span className={`font-bold text-lg ml-4 shrink-0 ${isSafe
                         ? (isDarkMode ? 'text-emerald-400' : 'text-emerald-600')
                         : (isDarkMode ? 'text-white/40' : 'text-gray-400')
                       }`}>
@@ -249,14 +251,35 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
                     </div>
                     
                     {dish.description && (
-                      <p className={`text-sm mb-3 leading-relaxed ${isSafe
+                      <p className={`text-sm mb-2 leading-relaxed ${isSafe
                         ? (isDarkMode ? 'text-white/60' : 'text-gray-600')
                         : (isDarkMode ? 'text-white/30' : 'text-gray-400')
                       }`}>
                         {dish.description}
                       </p>
                     )}
-                    
+
+                    {/* Score Planet & CO2 */}
+                    {dish.sub_scores && (
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className={`flex items-center gap-1 text-xs font-medium ${isSafe
+                          ? (isDarkMode ? 'text-emerald-400' : 'text-emerald-600')
+                          : (isDarkMode ? 'text-white/40' : 'text-gray-400')
+                        }`}>
+                          <span>🌍</span>
+                          <span>{dish.sub_scores.s_planet}</span>
+                        </div>
+                        {dish.enriched_attributes?.carbon_estimate && (
+                          <div className={`text-xs ${isSafe
+                            ? (isDarkMode ? 'text-white/50' : 'text-gray-500')
+                            : (isDarkMode ? 'text-white/30' : 'text-gray-400')
+                          }`}>
+                            {dish.enriched_attributes.carbon_estimate} kg CO₂
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     <div className="flex flex-wrap gap-1.5">
                       {/* Badge végé/vegan pour les plats safe */}
                       {isSafe && dish.vegan && (
