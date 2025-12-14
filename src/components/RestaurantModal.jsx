@@ -114,35 +114,45 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
       type: 'vegan',
       description: 'Quinoa, légumes rôtis, avocat, houmous',
       icon: '🥗',
-      category: 'Plat principal'
+      category: 'Plat principal',
+      price: 12.90,
+      savings: 3.00
     },
     {
       name: 'Burger Végétal',
       type: 'vegan',
       description: 'Steak de lentilles, légumes frais, sauce maison',
       icon: '🍔',
-      category: 'Plat principal'
+      category: 'Plat principal',
+      price: 14.50,
+      savings: 2.50
     },
     {
       name: 'Curry de Légumes',
       type: 'vegan',
       description: 'Lait de coco, légumes de saison, riz basmati',
       icon: '🍛',
-      category: 'Plat principal'
+      category: 'Plat principal',
+      price: 13.90,
+      savings: 4.00
     },
     {
       name: 'Poke Bowl Tofu',
       type: 'vegan',
       description: 'Tofu mariné, edamame, avocat, riz vinaigré',
       icon: '🥙',
-      category: 'Plat principal'
+      category: 'Plat principal',
+      price: 15.50,
+      savings: 2.00
     },
     {
       name: 'Pad Thaï Végé',
       type: 'vegetarian',
       description: 'Nouilles de riz, légumes sautés, cacahuètes',
       icon: '🍜',
-      category: 'Plat principal'
+      category: 'Plat principal',
+      price: 11.90,
+      savings: 3.50
     }
   ]
 
@@ -350,14 +360,22 @@ function RestaurantModal({ restaurant, onClose, userAllergies, isDarkMode = true
                         >
                           <span className="text-2xl">{suggestion.icon}</span>
                           <div className="flex-1">
-                            <div className={`font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                              {suggestion.name}
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <div className={`font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                                {suggestion.name}
+                              </div>
+                              <div className={`text-xs font-bold ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`}>
+                                {suggestion.price.toFixed(2)}€
+                              </div>
                             </div>
-                            <div className={`text-xs mt-0.5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                               {suggestion.description}
                             </div>
+                            <div className={`text-xs mt-1 font-semibold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
+                              💰 -{suggestion.savings.toFixed(2)}€ vs équivalent viande
+                            </div>
                           </div>
-                          <div className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                          <div className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap self-start ${
                             suggestion.type === 'vegan'
                               ? (isDarkMode ? 'bg-orange-500/20 text-orange-400' : 'bg-orange-100 text-orange-600')
                               : (isDarkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-600')
